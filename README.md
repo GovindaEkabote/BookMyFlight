@@ -74,13 +74,16 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
 
 
 #### Setup the project
-git clone https://github.com/GovindaEkabote/BookMyFlight
-cd BookMyFlight
-npm install
-npm run dev
+    - git clone https://github.com/GovindaEkabote/BookMyFlight
+    - cd BookMyFlight
+    - npm install
+    - npm run dev
 
 
 -- Inside the `src/config/config.json` file write the following code:
+
+
+
 `````
 {
   "development": {
