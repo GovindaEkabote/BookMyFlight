@@ -4,3 +4,4 @@ node_modules/
 # Environment variables
 .env
 combined.log
+src/config/config.json

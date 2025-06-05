@@ -72,3 +72,38 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
     - dateFormatter.js
     - emailHelper.js
 
+
+#### Setup the project
+git clone https://github.com/GovindaEkabote/BookMyFlight
+cd BookMyFlight
+npm install
+npm run dev
+
+
+-- Inside the `src/config/config.json` file write the following code:
+`````
+{
+  "development": {
+    "username": "root",
+    "password": "password",                 // write your database password
+    "database": "bookMyFlight",             //  database name
+    "host": "127.0.0.1",                    // database host cd 
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+``````
+    - This project uses MySQL as the database and is configured using Sequelize ORM. The database settings are environment-specific and are defined in config/config.json.
