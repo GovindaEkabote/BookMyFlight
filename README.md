@@ -2,7 +2,6 @@
 This is the backend project for BookMyFlight, built with Node.js, Express, and MySQL. It is designed to power the backend APIs for a flight booking platform. The project follows a clean and scalable folder structure, making it easy for frontend developers or other teams to integrate with.
 
 ## 🚀 Features
-
 - RESTful API endpoints for flight operations
 - User authentication and authorization
 - Booking management system
@@ -79,6 +78,8 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
     - npm install
     - npm run dev
 
+### go inside the `src` folder and execute the following command -- `npx sequelize init`
+    
 
 -- Inside the `src/config/config.json` file write the following code:
 
@@ -109,4 +110,39 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
   }
 }
 ``````
-    - This project uses MySQL as the database and is configured using Sequelize ORM. The database settings are environment-specific and are defined in config/config.json.
+- This project uses MySQL as the database and is configured using Sequelize ORM. The database settings are environment-specific and are defined in config/config.json.
+
+
+
+### some sequelize <command> :- 
+
+````
+Sequelize CLI [Node: 10.21.0, CLI: 6.0.0, ORM: 6.1.0]
+Commands:
+  sequelize db:migrate                        Run pending migrations
+  sequelize db:migrate:schema:timestamps:add  Update migration table to have timestamps
+  sequelize db:migrate:status                 List the status of all migrations
+  sequelize db:migrate:undo                   Reverts a migration
+  sequelize db:migrate:undo:all               Revert all migrations ran
+  sequelize db:seed                           Run specified seeder
+  sequelize db:seed:undo                      Deletes data from the database
+  sequelize db:seed:all                       Run every seeder
+  sequelize db:seed:undo:all                  Deletes data from the database
+  sequelize db:create                         Create database specified by configuration
+  sequelize db:drop                           Drop database specified by configuration
+  sequelize init                              Initializes project
+  sequelize init:config                       Initializes configuration
+  sequelize init:migrations                   Initializes migrations
+  sequelize init:models                       Initializes models
+  sequelize init:seeders                      Initializes seeders
+  sequelize migration:generate                Generates a new migration file      [aliases: migration:create]
+  sequelize model:generate                    Generates a model and its migration [aliases: model:create]
+  sequelize seed:generate                     Generates a new seed file           [aliases: seed:create]
+
+Options:
+  --version  Show version number                                                  [boolean]
+  --help     Show help                                                            [boolean]
+
+Please specify a command
+
+````
