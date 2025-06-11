@@ -4,6 +4,7 @@ const app = express();
 const apiRoutes = require('./routes')
 
 app.use(express.json())
+
 app.use('/api',apiRoutes);
 
 

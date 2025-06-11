@@ -85,7 +85,7 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
 
 
 
-`````
+`
 {
   "development": {
     "username": "root",
@@ -109,14 +109,14 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
     "dialect": "mysql"
   }
 }
-``````
+`
 - This project uses MySQL as the database and is configured using Sequelize ORM. The database settings are environment-specific and are defined in config/config.json.
 
 
 
 ### some sequelize command :- 
 
-````
+`
 Sequelize CLI [Node: 10.21.0, CLI: 6.0.0, ORM: 6.1.0]
 Commands:
   sequelize db:migrate                        Run pending migrations
@@ -145,4 +145,14 @@ Options:
 
 Please specify a command
 
-````
+`
+
+# Folder Flow:
+`
+1. Inside Airplanes Routes 
+2. Inside V1 Routes
+3. Inside api Routes
+4. Inside Controller 
+5. Inside the service
+6. Inside Repository
+`
