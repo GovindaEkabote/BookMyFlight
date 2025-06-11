@@ -1,9 +1,9 @@
 const express = require('express');
-const {infoControllers} = require('../../controllers') 
+const airPlanesRoutes = require('./airplane-routes') 
 
 const router = express.Router();
 
-router.get('/info',infoControllers.info)
 
+router.use('/airplanes',airPlanesRoutes)
 
 module.exports = router

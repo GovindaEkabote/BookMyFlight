@@ -68,4 +68,4 @@ class CrudRepositories {
     }
 }
 
-module.exports = {CrudRepositories}
+module.exports = CrudRepositories

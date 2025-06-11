@@ -8,23 +8,33 @@ const { AirplaneService } = require("../services");
  */
 
 async function createAirplane(req, res) {
-  try {
+  try {   
+    const { modelNumber, capacity, companyName, country } = req.body;
+    if (!modelNumber || !capacity || !companyName || !country) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message:
+          "Missing required fields: modelNumber, capacity, companyName, country",
+        data: {},
+        error: {},
+      });
+    }
     const airplane = await AirplaneService.createAirplane({
-      modelNumber: req.body.modelNumber,
-      capacity: req.body.capacity,
-      companyName: req.body.companyName,
-      country: req.body.country,
+      modelNumber,
+      capacity,
+      companyName,
+      country,
     });
     return res.status(StatusCodes.CREATED).json({
       success: true,
-      message: "Airplan  has been register successfully",
+      message: "Airplane has been registered successfully",
       data: airplane,
       error: {},
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Airplan failed to register",
+      message: "Airplane registration failed",
       data: {},
       error: error,
     });

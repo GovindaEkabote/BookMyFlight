@@ -18,4 +18,4 @@ class AirplaneRepositories extends CrudRepositories {
   }
 }
 
-module.exports = {AirplaneRepositories};
+module.exports = AirplaneRepositories;
