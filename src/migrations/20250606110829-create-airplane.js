@@ -15,7 +15,7 @@ module.exports = {
       },
       capacity: {
         type: Sequelize.INTEGER,
-         defaultValue: false 
+        defaultValue: 0 
       },
       companyName: {
         allowNull:false,
