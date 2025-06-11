@@ -114,7 +114,7 @@ This is the backend project for BookMyFlight, built with Node.js, Express, and M
 
 
 
-### some sequelize <command> :- 
+### some sequelize command :- 
 
 ````
 Sequelize CLI [Node: 10.21.0, CLI: 6.0.0, ORM: 6.1.0]
