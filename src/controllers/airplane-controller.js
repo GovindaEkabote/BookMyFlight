@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { AirplaneService } = require("../services");
-const {ErrorResponse, SuccessResponse} = require('../utils/common')
+const {ErrorResponse, SuccessResponse} = require('../utils/common');
+const { responsesError } = require("../utils/constant");
 
 /**
  *
@@ -15,7 +16,7 @@ async function createAirplane(req, res) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message:
-          "Missing required fields: modelNumber, capacity, companyName, country",
+          responsesError.AllFieldsRequired,
         data: {},
         error: {},
       });

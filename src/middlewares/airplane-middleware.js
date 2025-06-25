@@ -1,20 +1,22 @@
 const { StatusCodes } = require("http-status-codes");
-const {ErrorResponse} = require('../utils/common')
+const { ErrorResponse } = require("../utils/common");
+const AppError = require("../utils/errors/app-error");
+const { responsesError } = require("../utils/constant");
 
 function validateCreateRequest(req, res, next) {
   if (!req.body.modelNumber) {
-    ErrorResponse.message = "Something went wrong while registering airplane";
-    ErrorResponse.error = {
-        explanation:
-          "Model Number not found in the incomming request in the correct",
-      }
+    ErrorResponse.message = responsesError.RegisterWentWrong;
+    ErrorResponse.error = new AppError(
+      [responsesError.ModelNumberMissing],
+      StatusCodes.BAD_REQUEST
+    );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
   next();
 }
 
-module.exports ={
-    validateCreateRequest
-}
+module.exports = {
+  validateCreateRequest,
+};
 
 // modelNumber, capacity, companyName, country

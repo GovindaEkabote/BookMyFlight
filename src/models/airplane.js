@@ -17,7 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING, 
         allowNull: false 
        },
-      capacity: DataTypes.INTEGER,
+      capacity: {type: DataTypes.INTEGER,validate: {
+    max: 500
+  }},
       companyName: DataTypes.STRING,
       country: DataTypes.STRING,
     },
