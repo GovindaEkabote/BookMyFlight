@@ -64,8 +64,7 @@ async function createAirplane(req, res) {
 
 async function getAllAirplanes(req, res) {
   try {
-    const airplanes = await AirplaneService.getAirPlanes(); // ✅ fixed name
-
+    const airplanes = await AirplaneService.getAirPlanes(); 
     if (!airplanes || airplanes.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
