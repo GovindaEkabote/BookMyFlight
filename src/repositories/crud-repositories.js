@@ -53,19 +53,20 @@ class CrudRepositories {
         }
     }
 
-    async update(id, data){
-        try {
-            const response = await this.model.update(data, {
-                where:{
-                    id:id
-                }
-            });
-            return response
-        } catch (error) {
-            Logger.error('Something went wront in the crud repository :  update');
-            throw error;
-        }
-    }
+   async update(id, data) {
+  try {
+    const [updatedCount] = await this.model.update(data, {
+      where: { id: id },
+    });
+
+    if (updatedCount === 0) return null; // not found
+    return await this.model.findByPk(id); // return updated row
+  } catch (error) {
+    Logger.error(`Something went wrong in update() for ${this.model.name}`);
+    throw error;
+  }
+}
+
 }
 
 module.exports = CrudRepositories

@@ -13,5 +13,6 @@ router.post(
 router.get("/airplanes", AirPlaneController.getAllAirplanes)
 
 router.get("/airplane/:id", AirPlaneController.getAllAirplane)
+router.put("/airplane/update/:id", AirPlaneController.updateAirPlane)
 
 module.exports = router;

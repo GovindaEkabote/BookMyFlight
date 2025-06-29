@@ -30,17 +30,29 @@ async function getAirPlanes() {
   }
 }
 
-async function getAirPlane(id) {
+async function getAirPlane(id,data) {
    try {
-    const airplanes = await airplaneRepository.get(id);
+    const airplanes = await airplaneRepository.get(id,data);
     return airplanes
   } catch (error) {
     throw new AppError (`cannot fetch data of the airplane ${id}`, StatusCodes.INTERNAL_SERVER_ERROR)
   }
 }
 
+async function updateAirPlane(id, data) {
+  try {
+    const update = await airplaneRepository.update(id, data); 
+    return update;
+  } catch (error) {
+    throw new AppError(`Cannot update airplane with ID ${id}`, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+
+
 module.exports = {
     createAirplane,
     getAirPlanes,
-    getAirPlane
+    getAirPlane,
+    updateAirPlane
 }

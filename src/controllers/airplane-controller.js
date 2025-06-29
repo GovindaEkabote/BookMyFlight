@@ -9,7 +9,6 @@ const { AirplaneRepositories } = require("../repositories");
  * POST : /airplanes
  * req-body {modelNumber, capacity,companyName,country}
  */
-
 async function createAirplane(req, res) {
   try {
     const {
@@ -61,8 +60,6 @@ async function createAirplane(req, res) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
-
-
 /**
  *
  * GET : /airplanes
@@ -71,7 +68,7 @@ async function createAirplane(req, res) {
 
 async function getAllAirplanes(req, res) {
   try {
-    const airplanes = await AirplaneService.getAirPlanes(); 
+    const airplanes = await AirplaneService.getAirPlanes();
     if (!airplanes || airplanes.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
@@ -84,7 +81,6 @@ async function getAllAirplanes(req, res) {
     SuccessResponse.message = "Airplanes fetched successfully.";
     SuccessResponse.data = airplanes;
     return res.status(StatusCodes.OK).json(SuccessResponse);
-
   } catch (error) {
     console.log("Error fetching airplanes", error);
 
@@ -93,8 +89,6 @@ async function getAllAirplanes(req, res) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
-
-
 /**
  *
  * GET : /airplane/:id
@@ -102,7 +96,7 @@ async function getAllAirplanes(req, res) {
  */
 async function getAllAirplane(req, res) {
   try {
-    const airplanes = await AirplaneService.getAirPlane(req.params.id); 
+    const airplanes = await AirplaneService.getAirPlane(req.params.id);
     if (!airplanes || airplanes.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         success: false,
@@ -115,7 +109,6 @@ async function getAllAirplane(req, res) {
     SuccessResponse.message = "Airplane fetched successfully.";
     SuccessResponse.data = airplanes;
     return res.status(StatusCodes.OK).json(SuccessResponse);
-
   } catch (error) {
     console.log("Error fetching airplanes", error);
 
@@ -125,8 +118,39 @@ async function getAllAirplane(req, res) {
   }
 }
 
+/**
+ *
+ * PUT : /update/:id
+ * req-body: {modelNumber,manufacturer,registerationNumber,economySeats,businessSeats,firstClassSeats}
+ */
+async function updateAirPlane(req, res) {
+  try {
+    const airPlaneId = req.params.id;
+    const updateDate = req.body;
+
+    const update = await AirplaneService.updateAirPlane(airPlaneId, updateDate);
+    if (!update) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "AirPlane Not Found.",
+        data: {},
+        error: {},
+      });
+    }
+    SuccessResponse.message = "Airplane updated successfully.";
+    SuccessResponse.data = update;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+     console.log("Error updating airplanes", error);
+
+    ErrorResponse.message = "Failed to update airplane.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
 module.exports = {
   createAirplane,
   getAllAirplanes,
-  getAllAirplane
+  getAllAirplane,
+  updateAirPlane,
 };
