@@ -13,31 +13,44 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      capacity: {
+      manufacturer: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      registerationNumber: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      economySeats: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
-        validate: {
-          max: 500,
-        },
-      },
-      companyName: {
         allowNull: false,
-        type: Sequelize.STRING,
       },
-      country: {
+      businessSeats: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        type: Sequelize.STRING,
+      },
+      firstClassSeats: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Airplanes");
   },
