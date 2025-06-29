@@ -57,11 +57,21 @@ async function deleteAirPlane(id) {
   }
 }
 
+async function destroyAllAirplanes() {
+  try {
+    const deletedCount = await airplaneRepository.destroyAll(true); 
+    return deletedCount;
+  } catch (error) {
+    throw new AppError("Cannot delete all airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
 
 module.exports = {
     createAirplane,
     getAirPlanes,
     getAirPlane,
     updateAirPlane,
-    deleteAirPlane
+    deleteAirPlane,
+    destroyAllAirplanes
 }

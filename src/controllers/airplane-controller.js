@@ -179,6 +179,26 @@ async function destroyAirPlane(req,res) {
   }
 }
 
+/**
+ *
+ * DELETE : /delete
+ * req-body: {}
+ */
+async function destroyAllAirplanes(req, res) {
+  try {
+    const deletedCount = await AirplaneService.destroyAllAirplanes();
+
+    SuccessResponse.message = `Deleted ${deletedCount} airplanes.`;
+    SuccessResponse.data = { deletedCount };
+
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.message = "Failed to delete all airplanes.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
+
 
 module.exports = {
   createAirplane,
@@ -186,4 +206,5 @@ module.exports = {
   getAllAirplane,
   updateAirPlane,
   destroyAirPlane,
+  destroyAllAirplanes
 };

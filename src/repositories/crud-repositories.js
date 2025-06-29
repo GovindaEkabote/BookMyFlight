@@ -29,6 +29,23 @@ class CrudRepositories {
     }
   }
 
+  async destroyAll(confirm = false) {
+    if (!confirm) {
+    throw new Error("Mass deletion requires confirmation.");
+  }
+    try {
+      const response = await this.model.destroy({
+        where: {},
+      });
+      return response;
+    } catch (error) {
+      Logger.error(
+        "Something went wront in the crud repository :  destroy All"
+      );
+      throw error;
+    }
+  }
+
   async get(data) {
     try {
       const response = await this.model.findByPk(data);
@@ -58,8 +75,8 @@ class CrudRepositories {
         where: { id: id },
       });
 
-      if (updatedCount === 0) return null; 
-      return await this.model.findByPk(id); 
+      if (updatedCount === 0) return null;
+      return await this.model.findByPk(id);
     } catch (error) {
       Logger.error(`Something went wrong in update() for ${this.model.name}`);
       throw error;
