@@ -1,7 +1,8 @@
 const { StatusCodes } = require("http-status-codes");
 const { AirplaneService } = require("../services");
-const {ErrorResponse, SuccessResponse} = require('../utils/common');
+const { ErrorResponse, SuccessResponse } = require("../utils/common");
 const { responsesError } = require("../utils/constant");
+const { AirplaneRepositories } = require("../repositories");
 
 /**
  *
@@ -61,6 +62,34 @@ async function createAirplane(req, res) {
   }
 }
 
+async function getAllAirplanes(req, res) {
+  try {
+    const airplanes = await AirplaneService.getAirPlanes(); // ✅ fixed name
+
+    if (!airplanes || airplanes.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: responsesError.AirPlanesNotFound || "No airplanes found.",
+        data: {},
+        error: {},
+      });
+    }
+
+    SuccessResponse.message = "Airplanes fetched successfully.";
+    SuccessResponse.data = airplanes;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+
+  } catch (error) {
+    console.log("Error fetching airplanes", error);
+
+    ErrorResponse.message = "Failed to fetch airplanes.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
+
+
 module.exports = {
   createAirplane,
+  getAllAirplanes
 };
