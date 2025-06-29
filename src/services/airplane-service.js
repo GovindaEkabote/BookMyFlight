@@ -30,9 +30,9 @@ async function getAirPlanes() {
   }
 }
 
-async function getAirPlane(id,data) {
+async function getAirPlane(id) {
    try {
-    const airplanes = await airplaneRepository.get(id,data);
+    const airplanes = await airplaneRepository.get(id);
     return airplanes
   } catch (error) {
     throw new AppError (`cannot fetch data of the airplane ${id}`, StatusCodes.INTERNAL_SERVER_ERROR)
@@ -48,11 +48,20 @@ async function updateAirPlane(id, data) {
   }
 }
 
+async function deleteAirPlane(id) {
+   try {
+    const deleteAirPlane = await airplaneRepository.destroy(id);
+    return deleteAirPlane
+  } catch (error) {
+    throw new AppError (`cannot delete airplane ${id}`, StatusCodes.INTERNAL_SERVER_ERROR)
+  }
+}
 
 
 module.exports = {
     createAirplane,
     getAirPlanes,
     getAirPlane,
-    updateAirPlane
+    updateAirPlane,
+    deleteAirPlane
 }

@@ -148,9 +148,42 @@ async function updateAirPlane(req, res) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
+
+/**
+ *
+ * DELETE : /delete/:id
+ * req-body: {}
+ */
+async function destroyAirPlane(req,res) {
+   try {
+    const deleteAirplane = await AirplaneService.deleteAirPlane(req.params.id);
+
+    if (!deleteAirplane || deleteAirplane.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: responsesError.AirPlanesNotFound || "No airplane found.",
+        data: {},
+        error: {},
+      });
+    }
+
+    SuccessResponse.message = "Airplane deleted successfully.";
+    SuccessResponse.data = deleteAirplane;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    console.log("Error delete airplane", error);
+
+    ErrorResponse.message = "Failed to delete airplane.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
+
+
 module.exports = {
   createAirplane,
   getAllAirplanes,
   getAllAirplane,
   updateAirPlane,
+  destroyAirPlane,
 };
