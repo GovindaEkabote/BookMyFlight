@@ -96,17 +96,21 @@ async function getAllActive() {
     where:{isActive:true}
   })
   if(!activeAirplane || activeAirplane.length ==0){
-      throw new AppError(`Active Airlines not found`, StatusCodes.NOT_FOUND);
+      throw new AppError(`No active airplanes found`, StatusCodes.NOT_FOUND);
   }
   return activeAirplane;
   } catch (error) {
-    
+    if (error instanceof AppError) {
+      throw error; // Re-throw custom AppError
+    }
+    throw new AppError(
+      'Failed to fetch active airplanes',
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    );
   }
 
 }
-
-
-
 
 module.exports = {
     createAirplane,
@@ -116,5 +120,5 @@ module.exports = {
     deleteAirPlane,
     destroyAllAirplanes,
     updateAirplaneStatus,
-    // getAllActive
+    getAllActive
 }

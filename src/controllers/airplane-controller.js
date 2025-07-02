@@ -231,6 +231,18 @@ async function toggleAircraftStatus(req, res) {
   }
 }
 
+async function getActiveAirplanes(req,res) {
+  try {
+  const activeAirplanes = await AirplaneService.getAllActive();
+  SuccessResponse.message= "Active airplanes fetched successfully",
+  SuccessResponse.data= activeAirplanes;
+  return res.status(StatusCodes.OK).json(SuccessResponse)
+  } catch (error) {
+    ErrorResponse.message = "Failed to fetch active airplanes.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
 
 
 module.exports = {
@@ -241,5 +253,5 @@ module.exports = {
   destroyAirPlane,
   destroyAllAirplanes,
   toggleAircraftStatus,
-  // getActiveAirplanes
+  getActiveAirplanes
 };
