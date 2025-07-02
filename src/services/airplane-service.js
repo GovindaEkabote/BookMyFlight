@@ -33,6 +33,9 @@ async function getAirPlanes() {
 async function getAirPlane(id) {
    try {
     const airplanes = await airplaneRepository.get(id);
+     if (!airplanes) {
+      throw new AppError(`Airplane with id ${id} not found`, StatusCodes.NOT_FOUND);
+    }
     return airplanes
   } catch (error) {
     throw new AppError (`cannot fetch data of the airplane ${id}`, StatusCodes.INTERNAL_SERVER_ERROR)
@@ -66,6 +69,44 @@ async function destroyAllAirplanes() {
   }
 }
 
+async function updateAirplaneStatus(id, data) {
+  try {
+    const updatedCount = await airplaneRepository.update(id, data);
+    
+    if (updatedCount === null) {
+      throw new AppError("No airplane found to update", StatusCodes.NOT_FOUND);
+    }
+    
+    // Fetch the updated airplane to return complete data
+    const updatedAirplane = await airplaneRepository.get(id);
+    return updatedAirplane;
+    
+  } catch (error) {
+    throw new AppError(
+      `Failed to update airplane: ${error.message}`,
+      error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+
+async function getAllActive() {
+  try {
+    const activeAirplane =  await airplaneRepository.getAll({
+    where:{isActive:true}
+  })
+  if(!activeAirplane || activeAirplane.length ==0){
+      throw new AppError(`Active Airlines not found`, StatusCodes.NOT_FOUND);
+  }
+  return activeAirplane;
+  } catch (error) {
+    
+  }
+
+}
+
+
+
 
 module.exports = {
     createAirplane,
@@ -73,5 +114,7 @@ module.exports = {
     getAirPlane,
     updateAirPlane,
     deleteAirPlane,
-    destroyAllAirplanes
+    destroyAllAirplanes,
+    updateAirplaneStatus,
+    // getAllActive
 }

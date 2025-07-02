@@ -199,6 +199,39 @@ async function destroyAllAirplanes(req, res) {
   }
 }
 
+async function toggleAircraftStatus(req, res) {
+  try {
+    const { id } = req.params;
+
+    // 1. Get the airplane and verify existence
+    const airplane = await AirplaneService.getAirPlane(id);
+    
+    // 2. Toggle and update status
+    const newStatus = !airplane.isActive;
+    const updatedAirplane = await AirplaneService.updateAirplaneStatus(id, { 
+      isActive: newStatus 
+    });
+
+    // 3. Success response
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: `Aircraft status toggled to ${newStatus ? 'active' : 'inactive'} successfully.`,
+      data: updatedAirplane,
+      error: {}
+    });
+
+  } catch (error) {
+    // 4. Error response
+    return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || "Failed to toggle aircraft status.",
+      data: {},
+      error: error.details || {}
+    });
+  }
+}
+
+
 
 module.exports = {
   createAirplane,
@@ -206,5 +239,7 @@ module.exports = {
   getAllAirplane,
   updateAirPlane,
   destroyAirPlane,
-  destroyAllAirplanes
+  destroyAllAirplanes,
+  toggleAircraftStatus,
+  // getActiveAirplanes
 };
