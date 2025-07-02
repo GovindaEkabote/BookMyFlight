@@ -112,6 +112,28 @@ async function getAllActive() {
 
 }
 
+async function getAllInactive() {
+  try {
+    const activeAirplane =  await airplaneRepository.getAll({
+    where:{isActive:false}
+  })
+  if(!activeAirplane || activeAirplane.length ==0){
+      throw new AppError(`No inactive airplanes found`, StatusCodes.NOT_FOUND);
+  }
+  return activeAirplane;
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error; // Re-throw custom AppError
+    }
+    throw new AppError(
+      'Failed to fetch inactive airplanes',
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    );
+  }
+
+}
+
 module.exports = {
     createAirplane,
     getAirPlanes,
@@ -120,5 +142,6 @@ module.exports = {
     deleteAirPlane,
     destroyAllAirplanes,
     updateAirplaneStatus,
-    getAllActive
+    getAllActive,
+    getAllInactive
 }

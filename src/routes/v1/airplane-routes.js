@@ -21,5 +21,6 @@ router.delete("/airplane/delete-all", AirPlaneController.destroyAllAirplanes);
 // Status management
 router.put("/active/:id", AirPlaneController.toggleAircraftStatus);
 router.get('/active', AirPlaneController.getActiveAirplanes);
+router.get('/in-active', AirPlaneController.getInactiveAirplanes);
 
 module.exports = router;

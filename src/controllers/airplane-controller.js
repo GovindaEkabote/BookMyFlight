@@ -244,6 +244,19 @@ async function getActiveAirplanes(req,res) {
   }
 }
 
+async function getInactiveAirplanes(req,res) {
+  try {
+  const activeAirplanes = await AirplaneService.getAllInactive();
+  SuccessResponse.message= "Inactive airplanes fetched successfully",
+  SuccessResponse.data= activeAirplanes;
+  return res.status(StatusCodes.OK).json(SuccessResponse)
+  } catch (error) {
+    ErrorResponse.message = "Failed to fetch inactive airplanes.";
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
+}
+
 
 module.exports = {
   createAirplane,
@@ -253,5 +266,6 @@ module.exports = {
   destroyAirPlane,
   destroyAllAirplanes,
   toggleAircraftStatus,
-  getActiveAirplanes
+  getActiveAirplanes,
+  getInactiveAirplanes
 };
