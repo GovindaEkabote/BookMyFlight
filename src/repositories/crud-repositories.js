@@ -82,6 +82,24 @@ class CrudRepositories {
       throw error;
     }
   }
-}
 
+
+
+async getSearch(options = {}) {
+    try {
+      const response = await this.model.findAll(options);
+      if (!response) {
+        throw new Error('Database returned empty response');
+      }
+      return response;
+    } catch (error) {
+      console.error('Repository getAll error:', {
+        message: error.message,
+        stack: error.stack,
+        options
+      });
+      throw error; // Re-throw the original error
+    }
+}
+}
 module.exports = CrudRepositories;

@@ -3,6 +3,7 @@ const { AirplaneService } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
 const { responsesError } = require("../utils/constant");
 const { AirplaneRepositories } = require("../repositories");
+const AppError = require("../utils/errors/app-error");
 
 /**
  *
@@ -257,6 +258,37 @@ async function getInactiveAirplanes(req,res) {
   }
 }
 
+async function searchAirplanes(req, res) {
+  try {
+    const { modelNumber, registerationNumber, isActive } = req.query;
+
+    const filters = {
+      ...(modelNumber && { modelNumber }),
+      ...(registerationNumber && { registerationNumber }),
+      ...(isActive !== undefined && { isActive })
+    };
+
+    const result = await AirplaneService.search(filters);
+
+    SuccessResponse.message = "Search completed successfully.";
+    SuccessResponse.data = result;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+
+  } catch (error) {
+    console.error("SearchAirplanes Error:", error);
+
+    return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || "Search failed.",
+      data: {},
+      error: {
+        statusCode: error.statusCode || 500,
+        explanation: error.details || "Internal server error",
+      }
+    });
+  }
+}
+
 
 module.exports = {
   createAirplane,
@@ -267,5 +299,6 @@ module.exports = {
   destroyAllAirplanes,
   toggleAircraftStatus,
   getActiveAirplanes,
-  getInactiveAirplanes
+  getInactiveAirplanes,
+  searchAirplanes
 };

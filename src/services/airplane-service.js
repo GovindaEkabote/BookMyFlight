@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { AirplaneRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-error");
+const { Op } = require("sequelize");
 
 const airplaneRepository = new AirplaneRepositories();
 
@@ -134,6 +135,66 @@ async function getAllInactive() {
 
 }
 
+async function search(filters = {}) {
+  try {
+    if (!filters || typeof filters !== "object") {
+      throw new AppError("Invalid filters parameter", StatusCodes.BAD_REQUEST);
+    }
+
+    const where = {};
+
+    // modelNumber
+    if (filters.modelNumber) {
+      if (typeof filters.modelNumber !== "string") {
+        throw new AppError("modelNumber must be a string", StatusCodes.BAD_REQUEST);
+      }
+      where.modelNumber = { [Op.like]: `%${filters.modelNumber}%` };
+    }
+
+    // registerationNumber
+    if (filters.registerationNumber) {
+      if (typeof filters.registerationNumber !== "string") {
+        throw new AppError("registerationNumber must be a string", StatusCodes.BAD_REQUEST);
+      }
+      where.registerationNumber = { [Op.like]: `%${filters.registerationNumber}%` };
+    }
+
+    // isActive (optional)
+    if (filters.isActive !== undefined) {
+      const isActiveStr = String(filters.isActive).toLowerCase();
+      if (!["true", "false"].includes(isActiveStr)) {
+        throw new AppError("isActive must be a boolean (true/false)", StatusCodes.BAD_REQUEST);
+      }
+      where.isActive = isActiveStr === "true";
+    }
+
+    if (Object.keys(where).length === 0) {
+      throw new AppError("At least one search parameter is required", StatusCodes.BAD_REQUEST);
+    }
+
+    const airplanes = await airplaneRepository.getSearch({ where });
+
+    if (!airplanes || airplanes.length === 0) {
+      throw new AppError("No airplanes found matching your criteria", StatusCodes.NOT_FOUND);
+    }
+
+    return airplanes;
+
+  } catch (error) {
+    console.error("Search service error:", error);
+
+    if (error instanceof AppError) throw error;
+
+    // 💥 FIXED: Pass details as an object
+    throw new AppError(
+      error.message || "Search failed",
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      { stack: error.stack }
+    );
+  }
+}
+
+
 module.exports = {
     createAirplane,
     getAirPlanes,
@@ -143,5 +204,6 @@ module.exports = {
     destroyAllAirplanes,
     updateAirplaneStatus,
     getAllActive,
-    getAllInactive
+    getAllInactive,
+    search
 }
