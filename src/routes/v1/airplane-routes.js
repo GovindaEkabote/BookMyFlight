@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { AirPlaneController } = require("../../controllers");
 const { AirPlaneMiddleware } = require("../../middlewares");
+const limiter = require("../../middlewares/rateLimit");
 
 // /api/v1/airplanes/register : POST
 // Create and basic CRUD
@@ -22,6 +23,6 @@ router.get('/active', AirPlaneController.getActiveAirplanes);
 router.get('/in-active', AirPlaneController.getInactiveAirplanes);
 
 // Airplanes Search and Filtering
-router.get('/search', AirPlaneController.searchAirplanes);
+router.get('/search',limiter, AirPlaneController.searchAirplanes);
 
 module.exports = router;

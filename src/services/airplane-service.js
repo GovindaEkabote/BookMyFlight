@@ -110,7 +110,6 @@ async function getAllActive() {
       error.message
     );
   }
-
 }
 
 async function getAllInactive() {
@@ -205,5 +204,5 @@ module.exports = {
     updateAirplaneStatus,
     getAllActive,
     getAllInactive,
-    search
+    search,
 }
