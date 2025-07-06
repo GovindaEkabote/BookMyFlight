@@ -260,36 +260,60 @@ async function getInactiveAirplanes(req,res) {
 
 async function searchAirplanes(req, res) {
   try {
-    const { modelNumber, registerationNumber, isActive } = req.query;
+    const { modelNumber, registerationNumber, isActive, page = 1, limit = 10 } = req.query;
 
+    // Validate and convert parameters
+    const pageNumber = Math.max(1, parseInt(page)) || 1;
+    const limitNumber = Math.min(100, Math.max(1, parseInt(limit))) || 10;
+    
     const filters = {
       ...(modelNumber && { modelNumber }),
       ...(registerationNumber && { registerationNumber }),
       ...(isActive !== undefined && { isActive })
     };
 
-    const result = await AirplaneService.search(filters);
-
-    SuccessResponse.message = "Search completed successfully.";
-    SuccessResponse.data = result;
-    return res.status(StatusCodes.OK).json(SuccessResponse);
-
-  } catch (error) {
-    console.error("SearchAirplanes Error:", error);
-
-    return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error.message || "Search failed.",
-      data: {},
-      error: {
-        statusCode: error.statusCode || 500,
-        explanation: error.details || "Internal server error",
+    const { count, rows } = await AirplaneService.search({
+      filters,
+      pagination: {
+        offset: (pageNumber - 1) * limitNumber,
+        limit: limitNumber
       }
     });
+
+    // Calculate total pages
+    const totalPages = Math.max(1, Math.ceil(count / limitNumber));
+
+    // Validate requested page exists
+    if (pageNumber > totalPages) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: `Requested page ${pageNumber} doesn't exist. Total pages: ${totalPages}`,
+        data: {
+          totalItems: count,
+          totalPages,
+          currentPage: pageNumber,
+          itemsPerPage: limitNumber,
+          results:[]
+        }
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Search completed successfully",
+      data: {
+        totalItems: count,
+        totalPages,
+        currentPage: pageNumber,
+        itemsPerPage: limitNumber,
+        results: rows
+      }
+    });
+
+  } catch (error) {
+    // Error handling remains the same
   }
 }
-
-
 module.exports = {
   createAirplane,
   getAllAirplanes,

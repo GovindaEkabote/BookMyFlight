@@ -134,61 +134,53 @@ async function getAllInactive() {
 
 }
 
-async function search(filters = {}) {
-  try {
-    if (!filters || typeof filters !== "object") {
-      throw new AppError("Invalid filters parameter", StatusCodes.BAD_REQUEST);
-    }
 
+
+async function search({ filters, pagination }) {
+  try {
     const where = {};
 
-    // modelNumber
     if (filters.modelNumber) {
-      if (typeof filters.modelNumber !== "string") {
-        throw new AppError("modelNumber must be a string", StatusCodes.BAD_REQUEST);
-      }
-      where.modelNumber = { [Op.like]: `%${filters.modelNumber}%` };
+      where.modelNumber = { 
+        [Op.like]: `%${filters.modelNumber.replace(/%/g, '\\%')}%` 
+      };
     }
 
-    // registerationNumber
     if (filters.registerationNumber) {
-      if (typeof filters.registerationNumber !== "string") {
-        throw new AppError("registerationNumber must be a string", StatusCodes.BAD_REQUEST);
-      }
-      where.registerationNumber = { [Op.like]: `%${filters.registerationNumber}%` };
+      where.registerationNumber = { 
+        [Op.like]: `%${filters.registerationNumber.replace(/%/g, '\\%')}%` 
+      };
     }
 
-    // isActive (optional)
     if (filters.isActive !== undefined) {
-      const isActiveStr = String(filters.isActive).toLowerCase();
-      if (!["true", "false"].includes(isActiveStr)) {
-        throw new AppError("isActive must be a boolean (true/false)", StatusCodes.BAD_REQUEST);
-      }
-      where.isActive = isActiveStr === "true";
+      where.isActive = filters.isActive;
     }
 
-    if (Object.keys(where).length === 0) {
-      throw new AppError("At least one search parameter is required", StatusCodes.BAD_REQUEST);
-    }
+    const options = { 
+      where,
+      ...(pagination && {
+        offset: pagination.offset,
+        limit: pagination.limit
+      })
+    };
 
-    const airplanes = await airplaneRepository.getSearch({ where });
+    console.log('Final search options:', JSON.stringify(options, null, 2));
 
-    if (!airplanes || airplanes.length === 0) {
-      throw new AppError("No airplanes found matching your criteria", StatusCodes.NOT_FOUND);
-    }
-
-    return airplanes;
+    const result = await airplaneRepository.findAndCountAll(options);
+    return result;
 
   } catch (error) {
-    console.error("Search service error:", error);
+    console.error('Search service error:', {
+      message: error.message,
+      stack: error.stack,
+      filters,
+      pagination
+    });
 
-    if (error instanceof AppError) throw error;
-
-    // 💥 FIXED: Pass details as an object
     throw new AppError(
-      error.message || "Search failed",
+      'Search operation failed: ' + error.message,
       StatusCodes.INTERNAL_SERVER_ERROR,
-      { stack: error.stack }
+      { originalError: error.message }
     );
   }
 }

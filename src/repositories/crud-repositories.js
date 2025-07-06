@@ -101,5 +101,7 @@ async getSearch(options = {}) {
       throw error; // Re-throw the original error
     }
 }
+
+
 }
 module.exports = CrudRepositories;
