@@ -3,6 +3,7 @@ const router = express.Router();
 const { AirPlaneController } = require("../../controllers");
 const { AirPlaneMiddleware } = require("../../middlewares");
 const limiter = require("../../middlewares/rateLimit");
+const { query } = require("express-validator");
 
 // /api/v1/airplanes/register : POST
 // Create and basic CRUD
@@ -24,5 +25,17 @@ router.get('/in-active', AirPlaneController.getInactiveAirplanes);
 
 // Airplanes Search and Filtering
 router.get('/search',limiter, AirPlaneController.searchAirplanes);
+router.get('/filter',   [
+    query('minCapacity').optional().isInt({ min: 0 }).toInt(),
+    query('maxCapacity').optional().isInt({ min: 0 }).toInt(),
+    query('minEconomy').optional().isInt({ min: 0 }).toInt(),
+    query('maxEconomy').optional().isInt({ min: 0 }).toInt(),
+    query('minBusiness').optional().isInt({ min: 0 }).toInt(),
+    query('maxBusiness').optional().isInt({ min: 0 }).toInt(),
+    query('minFirstClass').optional().isInt({ min: 0 }).toInt(),
+    query('maxFirstClass').optional().isInt({ min: 0 }).toInt(),
+    query('page').optional().isInt({ min: 1 }).default(1).toInt(),
+    query('limit').optional().isInt({ min: 1, max: 100 }).default(10).toInt()
+  ],AirPlaneController.filterCapacity)
 
 module.exports = router;

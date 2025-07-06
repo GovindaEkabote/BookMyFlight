@@ -49,6 +49,11 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Airplane",
       timestamps: true,
+      getterMethods:{
+        totalSeats(){
+          return this.economySeats + this.businessSeats + this.firstClassSeats
+        }
+      }
     }
   );
 

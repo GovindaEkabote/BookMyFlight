@@ -1,7 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const { AirplaneRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-error");
-const { Op } = require("sequelize");
+const { Op, Sequelize, literal } = require("sequelize");
+
+
 
 const airplaneRepository = new AirplaneRepositories();
 
@@ -90,7 +92,6 @@ async function updateAirplaneStatus(id, data) {
   }
 }
 
-
 async function getAllActive() {
   try {
     const activeAirplane =  await airplaneRepository.getAll({
@@ -133,8 +134,6 @@ async function getAllInactive() {
   }
 
 }
-
-
 
 async function search({ filters, pagination }) {
   try {
@@ -185,6 +184,54 @@ async function search({ filters, pagination }) {
   }
 }
 
+async function filterCapacity({ minCapacity, maxCapacity, page = 1, limit = 10 }) {
+  try {
+    // Validate inputs
+    if (minCapacity && isNaN(minCapacity)) throw new AppError('minCapacity must be a number', 400);
+    if (maxCapacity && isNaN(maxCapacity)) throw new AppError('maxCapacity must be a number', 400);
+
+    const totalSeatsExpr = literal('(economySeats + businessSeats + firstClassSeats)');
+
+    const where = { [Op.and]: [] };
+
+    if (minCapacity) {
+      where[Op.and].push(
+        Sequelize.where(totalSeatsExpr, { [Op.gte]: minCapacity })
+      );
+    }
+
+    if (maxCapacity) {
+      where[Op.and].push(
+        Sequelize.where(totalSeatsExpr, { [Op.lte]: maxCapacity })
+      );
+    }
+
+    const options = {
+      where,
+      attributes: {
+        include: [
+          [totalSeatsExpr, 'totalSeats']
+        ]
+      },
+      offset: (page - 1) * limit,
+      limit,
+      order: [[totalSeatsExpr, 'ASC']]
+    };
+
+    console.log('Final filter options:', JSON.stringify(options, null, 2));
+
+    const result = await airplaneRepository.findAndCountAll(options);
+
+    return result;
+  } catch (error) {
+    console.error('Filter error:', error);
+    throw new AppError(
+      `Capacity filter failed: ${error.message}`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 
 module.exports = {
     createAirplane,
@@ -197,4 +244,5 @@ module.exports = {
     getAllActive,
     getAllInactive,
     search,
+    filterCapacity,
 }

@@ -314,6 +314,55 @@ async function searchAirplanes(req, res) {
     // Error handling remains the same
   }
 }
+
+async function filterCapacity(req,res) {
+  try {
+    const { minCapacity, maxCapacity, page = 1, limit = 10 } = req.query;
+
+    // Convert and validate
+    const filters = {
+      ...(minCapacity !== undefined && { minCapacity: parseInt(minCapacity) }),
+      ...(maxCapacity !== undefined && { maxCapacity: parseInt(maxCapacity) })
+    };
+
+    // Validate at least one filter exists
+    if (!minCapacity && !maxCapacity) {
+      throw new AppError('Must provide at least minCapacity or maxCapacity', 400);
+    }
+
+    const { count, rows } = await AirplaneService.filterCapacity({
+      ...filters,
+      page: parseInt(page),
+      limit: parseInt(limit)
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Airplanes filtered successfully',
+      data: {
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: parseInt(page),
+        itemsPerPage: parseInt(limit),
+        results: rows.map(plane => ({
+          ...plane.get({ plain: true }),
+          totalSeats: plane.totalSeats // Include calculated total
+        }))
+      }
+    });
+
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message,
+      data: null,
+      error: process.env.NODE_ENV === 'development' ? {
+        details: error.stack
+      } : null
+    });
+  }
+}
+
 module.exports = {
   createAirplane,
   getAllAirplanes,
@@ -324,5 +373,5 @@ module.exports = {
   toggleAircraftStatus,
   getActiveAirplanes,
   getInactiveAirplanes,
-  searchAirplanes
+  searchAirplanes,filterCapacity
 };
