@@ -1,12 +1,11 @@
 const { StatusCodes } = require("http-status-codes");
 const { AirplaneRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-error");
-const { Op, Sequelize, literal } = require("sequelize");
+const { Op, Sequelize, literal, where } = require("sequelize");
 const { responsesError } = require("../utils/constant");
-
-
-
 const airplaneRepository = new AirplaneRepositories();
+
+
 
 async function createAirplane(data) {
   try {
@@ -233,6 +232,19 @@ async function filterCapacity({ minCapacity, maxCapacity, page = 1, limit = 10 }
   }
 }
 
+async function getAirPlaneManufacture(manufacturer) {
+    const result = await airplaneRepository.findByManufacturer(manufacturer);
+
+    if (!result || result.rows.length === 0) {
+        throw new AppError(
+            responsesError.getAirPlaneManufactureMessage[3], // "No airplanes found for the specified manufacturer"
+            StatusCodes.NOT_FOUND
+        );
+    }
+
+    return result;
+}
+
 
 module.exports = {
     createAirplane,
@@ -246,4 +258,5 @@ module.exports = {
     getAllInactive,
     search,
     filterCapacity,
+    getAirPlaneManufacture
 }

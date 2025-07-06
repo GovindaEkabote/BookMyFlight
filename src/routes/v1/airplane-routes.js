@@ -37,5 +37,6 @@ router.get('/filter',   [
     query('page').optional().isInt({ min: 1 }).default(1).toInt(),
     query('limit').optional().isInt({ min: 1, max: 100 }).default(10).toInt()
   ],AirPlaneController.filterCapacity)
+  router.get('/manufacturer/:manufacturer',AirPlaneController.getAirPlaneManufactureDetaild)
 
 module.exports = router;

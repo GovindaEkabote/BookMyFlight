@@ -48,7 +48,7 @@ async function createAirplane(req, res) {
       firstClassSeats,
     });
 
-    SuccessResponse.message =responsesError.successMessage;
+    SuccessResponse.message = responsesError.successMessage;
     SuccessResponse.data = airplane;
 
     return res.status(StatusCodes.CREATED).json(SuccessResponse);
@@ -142,7 +142,7 @@ async function updateAirPlane(req, res) {
     SuccessResponse.data = update;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
-     console.log(responsesError.updateMessage[1], error);
+    console.log(responsesError.updateMessage[1], error);
 
     ErrorResponse.message = responsesError.updateMessage[2];
     ErrorResponse.error = error;
@@ -155,8 +155,8 @@ async function updateAirPlane(req, res) {
  * DELETE : /delete/:id
  * req-body: {}
  */
-async function destroyAirPlane(req,res) {
-   try {
+async function destroyAirPlane(req, res) {
+  try {
     const deleteAirplane = await AirplaneService.deleteAirPlane(req.params.id);
 
     if (!deleteAirplane || deleteAirplane.length === 0) {
@@ -206,38 +206,41 @@ async function toggleAircraftStatus(req, res) {
 
     // 1. Get the airplane and verify existence
     const airplane = await AirplaneService.getAirPlane(id);
-    
+
     // 2. Toggle and update status
     const newStatus = !airplane.isActive;
-    const updatedAirplane = await AirplaneService.updateAirplaneStatus(id, { 
-      isActive: newStatus 
+    const updatedAirplane = await AirplaneService.updateAirplaneStatus(id, {
+      isActive: newStatus,
     });
 
     // 3. Success response
     return res.status(StatusCodes.OK).json({
       success: true,
-      message: `Aircraft status toggled to ${newStatus ? 'active' : 'inactive'} successfully.`,
+      message: `Aircraft status toggled to ${
+        newStatus ? "active" : "inactive"
+      } successfully.`,
       data: updatedAirplane,
-      error: {}
+      error: {},
     });
-
   } catch (error) {
     // 4. Error response
-    return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error.message || "Failed to toggle aircraft status.",
-      data: {},
-      error: error.details || {}
-    });
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({
+        success: false,
+        message: error.message || "Failed to toggle aircraft status.",
+        data: {},
+        error: error.details || {},
+      });
   }
 }
 
-async function getActiveAirplanes(req,res) {
+async function getActiveAirplanes(req, res) {
   try {
-  const activeAirplanes = await AirplaneService.getAllActive();
-  SuccessResponse.message= responsesError.activeAirplanesMessage[0],
-  SuccessResponse.data= activeAirplanes;
-  return res.status(StatusCodes.OK).json(SuccessResponse)
+    const activeAirplanes = await AirplaneService.getAllActive();
+    (SuccessResponse.message = responsesError.activeAirplanesMessage[0]),
+      (SuccessResponse.data = activeAirplanes);
+    return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     ErrorResponse.message = responsesError.activeAirplanesMessage[1];
     ErrorResponse.error = error;
@@ -245,12 +248,12 @@ async function getActiveAirplanes(req,res) {
   }
 }
 
-async function getInactiveAirplanes(req,res) {
+async function getInactiveAirplanes(req, res) {
   try {
-  const activeAirplanes = await AirplaneService.getAllInactive();
-  SuccessResponse.message= responsesError.InActiveAirplanesMessage[0],
-  SuccessResponse.data= activeAirplanes;
-  return res.status(StatusCodes.OK).json(SuccessResponse)
+    const activeAirplanes = await AirplaneService.getAllInactive();
+    (SuccessResponse.message = responsesError.InActiveAirplanesMessage[0]),
+      (SuccessResponse.data = activeAirplanes);
+    return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     ErrorResponse.message = responsesError.InActiveAirplanesMessage[1];
     ErrorResponse.error = error;
@@ -260,24 +263,30 @@ async function getInactiveAirplanes(req,res) {
 
 async function searchAirplanes(req, res) {
   try {
-    const { modelNumber, registerationNumber, isActive, page = 1, limit = 10 } = req.query;
+    const {
+      modelNumber,
+      registerationNumber,
+      isActive,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     // Validate and convert parameters
     const pageNumber = Math.max(1, parseInt(page)) || 1;
     const limitNumber = Math.min(100, Math.max(1, parseInt(limit))) || 10;
-    
+
     const filters = {
       ...(modelNumber && { modelNumber }),
       ...(registerationNumber && { registerationNumber }),
-      ...(isActive !== undefined && { isActive })
+      ...(isActive !== undefined && { isActive }),
     };
 
     const { count, rows } = await AirplaneService.search({
       filters,
       pagination: {
         offset: (pageNumber - 1) * limitNumber,
-        limit: limitNumber
-      }
+        limit: limitNumber,
+      },
     });
 
     // Calculate total pages
@@ -293,8 +302,8 @@ async function searchAirplanes(req, res) {
           totalPages,
           currentPage: pageNumber,
           itemsPerPage: limitNumber,
-          results:[]
-        }
+          results: [],
+        },
       });
     }
 
@@ -306,61 +315,89 @@ async function searchAirplanes(req, res) {
         totalPages,
         currentPage: pageNumber,
         itemsPerPage: limitNumber,
-        results: rows
-      }
+        results: rows,
+      },
     });
-
   } catch (error) {
     // Error handling remains the same
   }
 }
 
-async function filterCapacity(req,res) {
+async function filterCapacity(req, res) {
   try {
     const { minCapacity, maxCapacity, page = 1, limit = 10 } = req.query;
 
     // Convert and validate
     const filters = {
       ...(minCapacity !== undefined && { minCapacity: parseInt(minCapacity) }),
-      ...(maxCapacity !== undefined && { maxCapacity: parseInt(maxCapacity) })
+      ...(maxCapacity !== undefined && { maxCapacity: parseInt(maxCapacity) }),
     };
 
     // Validate at least one filter exists
     if (!minCapacity && !maxCapacity) {
-      throw new AppError('Must provide at least minCapacity or maxCapacity', 400);
+      throw new AppError(
+        "Must provide at least minCapacity or maxCapacity",
+        400
+      );
     }
 
     const { count, rows } = await AirplaneService.filterCapacity({
       ...filters,
       page: parseInt(page),
-      limit: parseInt(limit)
+      limit: parseInt(limit),
     });
 
     return res.status(200).json({
       success: true,
-      message: 'Airplanes filtered successfully',
+      message: "Airplanes filtered successfully",
       data: {
         totalItems: count,
         totalPages: Math.ceil(count / limit),
         currentPage: parseInt(page),
         itemsPerPage: parseInt(limit),
-        results: rows.map(plane => ({
+        results: rows.map((plane) => ({
           ...plane.get({ plain: true }),
-          totalSeats: plane.totalSeats // Include calculated total
-        }))
-      }
+          totalSeats: plane.totalSeats, // Include calculated total
+        })),
+      },
     });
-
   } catch (error) {
     return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message,
       data: null,
-      error: process.env.NODE_ENV === 'development' ? {
-        details: error.stack
-      } : null
+      error:
+        process.env.NODE_ENV === "development"
+          ? {
+              details: error.stack,
+            }
+          : null,
     });
   }
+}
+
+async function getAirPlaneManufactureDetaild(req, res) {
+    try {
+        const { manufacturer } = req.params;
+        if (!manufacturer) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    message: responsesError.getAirPlaneManufactureMessage[2],
+                });
+            }
+        const airplanes = await AirplaneService.getAirPlaneManufacture(manufacturer);
+        
+        SuccessResponse.message = responsesError.getAirPlaneManufactureMessage[0];
+        SuccessResponse.data = airplanes;
+        
+        // Add this return statement
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+        
+    } catch (error) {
+        ErrorResponse.message = responsesError.getAirPlaneManufactureMessage[1];
+        ErrorResponse.error = error;
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+    }
 }
 
 module.exports = {
@@ -373,5 +410,7 @@ module.exports = {
   toggleAircraftStatus,
   getActiveAirplanes,
   getInactiveAirplanes,
-  searchAirplanes,filterCapacity
+  searchAirplanes,
+  filterCapacity,
+  getAirPlaneManufactureDetaild,
 };

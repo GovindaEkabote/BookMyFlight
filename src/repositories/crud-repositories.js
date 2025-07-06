@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { Logger } = require("../config");
 
 class CrudRepositories {
@@ -69,7 +70,7 @@ class CrudRepositories {
     }
   }
 
-  async update(id, data) {
+async update(id, data) {
     try {
       const [updatedCount] = await this.model.update(data, {
         where: { id: id },
@@ -81,9 +82,7 @@ class CrudRepositories {
       Logger.error(`Something went wrong in update() for ${this.model.name}`);
       throw error;
     }
-  }
-
-
+}
 
 async getSearch(options = {}) {
     try {
@@ -99,6 +98,18 @@ async getSearch(options = {}) {
         options
       });
       throw error; // Re-throw the original error
+    }
+}
+
+async findByManufacturer(manufacturer) {
+    try {
+        const getManufacturer = await this.model.findAndCountAll({
+            where: { manufacturer }
+        });
+        return getManufacturer;
+    } catch (error) {
+        Logger.error("Something went wrong in the crud repository : find manufacturer", error);
+        throw error;
     }
 }
 
