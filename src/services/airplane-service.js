@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { AirplaneRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-error");
 const { Op, Sequelize, literal } = require("sequelize");
+const { responsesError } = require("../utils/constant");
 
 
 
@@ -29,7 +30,7 @@ async function getAirPlanes() {
     const airplanes = await airplaneRepository.getAll();
     return airplanes
   } catch (error) {
-    throw new AppError ('cannot fetch data of all the airplanes', StatusCodes.INTERNAL_SERVER_ERROR)
+    throw new AppError (responsesError.CanNotFetchAllAiroplanes, StatusCodes.INTERNAL_SERVER_ERROR)
   }
 }
 
@@ -68,7 +69,7 @@ async function destroyAllAirplanes() {
     const deletedCount = await airplaneRepository.destroyAll(true); 
     return deletedCount;
   } catch (error) {
-    throw new AppError("Cannot delete all airplanes", StatusCodes.INTERNAL_SERVER_ERROR);
+    throw new AppError(responsesError.CanNotDeleteAiroplanes, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -77,7 +78,7 @@ async function updateAirplaneStatus(id, data) {
     const updatedCount = await airplaneRepository.update(id, data);
     
     if (updatedCount === null) {
-      throw new AppError("No airplane found to update", StatusCodes.NOT_FOUND);
+      throw new AppError(responsesError.NoAiroplanesFound, StatusCodes.NOT_FOUND);
     }
     
     // Fetch the updated airplane to return complete data
@@ -98,7 +99,7 @@ async function getAllActive() {
     where:{isActive:true}
   })
   if(!activeAirplane || activeAirplane.length ==0){
-      throw new AppError(`No active airplanes found`, StatusCodes.NOT_FOUND);
+      throw new AppError(responsesError.ActivePlanes, StatusCodes.NOT_FOUND);
   }
   return activeAirplane;
   } catch (error) {
@@ -106,7 +107,7 @@ async function getAllActive() {
       throw error; // Re-throw custom AppError
     }
     throw new AppError(
-      'Failed to fetch active airplanes',
+      responsesError.FailedToFetchActiveAirplanes,
       StatusCodes.INTERNAL_SERVER_ERROR,
       error.message
     );
@@ -119,7 +120,7 @@ async function getAllInactive() {
     where:{isActive:false}
   })
   if(!activeAirplane || activeAirplane.length ==0){
-      throw new AppError(`No inactive airplanes found`, StatusCodes.NOT_FOUND);
+      throw new AppError(responsesError.InActiveAirplanes, StatusCodes.NOT_FOUND);
   }
   return activeAirplane;
   } catch (error) {
@@ -127,7 +128,7 @@ async function getAllInactive() {
       throw error; // Re-throw custom AppError
     }
     throw new AppError(
-      'Failed to fetch inactive airplanes',
+     responsesError.InActiveAirplanesFailed,
       StatusCodes.INTERNAL_SERVER_ERROR,
       error.message
     );
@@ -187,8 +188,8 @@ async function search({ filters, pagination }) {
 async function filterCapacity({ minCapacity, maxCapacity, page = 1, limit = 10 }) {
   try {
     // Validate inputs
-    if (minCapacity && isNaN(minCapacity)) throw new AppError('minCapacity must be a number', 400);
-    if (maxCapacity && isNaN(maxCapacity)) throw new AppError('maxCapacity must be a number', 400);
+    if (minCapacity && isNaN(minCapacity)) throw new AppError(responsesError.MinCapacity, 400);
+    if (maxCapacity && isNaN(maxCapacity)) throw new AppError(responsesError.MaxCapacity, 400);
 
     const totalSeatsExpr = literal('(economySeats + businessSeats + firstClassSeats)');
 

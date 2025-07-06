@@ -48,14 +48,14 @@ async function createAirplane(req, res) {
       firstClassSeats,
     });
 
-    SuccessResponse.message = "Airplane created successfully.";
+    SuccessResponse.message =responsesError.successMessage;
     SuccessResponse.data = airplane;
 
     return res.status(StatusCodes.CREATED).json(SuccessResponse);
   } catch (error) {
     console.error("Create airplane error:", error);
 
-    ErrorResponse.message = "Airplane registration failed.";
+    ErrorResponse.message = responsesError.FailedMessage;
     ErrorResponse.error = error;
 
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
@@ -79,13 +79,13 @@ async function getAllAirplanes(req, res) {
       });
     }
 
-    SuccessResponse.message = "Airplanes fetched successfully.";
+    SuccessResponse.message = responsesError.FetchedSuccessfully;
     SuccessResponse.data = airplanes;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     console.log("Error fetching airplanes", error);
 
-    ErrorResponse.message = "Failed to fetch airplanes.";
+    ErrorResponse.message = responsesError.FailedFetch;
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -107,13 +107,13 @@ async function getAllAirplane(req, res) {
       });
     }
 
-    SuccessResponse.message = "Airplane fetched successfully.";
+    SuccessResponse.message = responsesError.FetchedSuccessfully;
     SuccessResponse.data = airplanes;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
-    console.log("Error fetching airplanes", error);
+    console.log(responsesError.FailedFetch, error);
 
-    ErrorResponse.message = "Failed to fetch airplane.";
+    ErrorResponse.message = responsesError.FailedFetch;
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -138,13 +138,13 @@ async function updateAirPlane(req, res) {
         error: {},
       });
     }
-    SuccessResponse.message = "Airplane updated successfully.";
+    SuccessResponse.message = responsesError.updateMessage[0];
     SuccessResponse.data = update;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
-     console.log("Error updating airplanes", error);
+     console.log(responsesError.updateMessage[1], error);
 
-    ErrorResponse.message = "Failed to update airplane.";
+    ErrorResponse.message = responsesError.updateMessage[2];
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -168,13 +168,13 @@ async function destroyAirPlane(req,res) {
       });
     }
 
-    SuccessResponse.message = "Airplane deleted successfully.";
+    SuccessResponse.message = responsesError.deleteMessage[0];
     SuccessResponse.data = deleteAirplane;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     console.log("Error delete airplane", error);
 
-    ErrorResponse.message = "Failed to delete airplane.";
+    ErrorResponse.message = responsesError.deleteMessage[1];
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -194,7 +194,7 @@ async function destroyAllAirplanes(req, res) {
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
-    ErrorResponse.message = "Failed to delete all airplanes.";
+    ErrorResponse.message = responsesError.deleteMessage[2];
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -235,11 +235,11 @@ async function toggleAircraftStatus(req, res) {
 async function getActiveAirplanes(req,res) {
   try {
   const activeAirplanes = await AirplaneService.getAllActive();
-  SuccessResponse.message= "Active airplanes fetched successfully",
+  SuccessResponse.message= responsesError.activeAirplanesMessage[0],
   SuccessResponse.data= activeAirplanes;
   return res.status(StatusCodes.OK).json(SuccessResponse)
   } catch (error) {
-    ErrorResponse.message = "Failed to fetch active airplanes.";
+    ErrorResponse.message = responsesError.activeAirplanesMessage[1];
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
@@ -248,11 +248,11 @@ async function getActiveAirplanes(req,res) {
 async function getInactiveAirplanes(req,res) {
   try {
   const activeAirplanes = await AirplaneService.getAllInactive();
-  SuccessResponse.message= "Inactive airplanes fetched successfully",
+  SuccessResponse.message= responsesError.InActiveAirplanesMessage[0],
   SuccessResponse.data= activeAirplanes;
   return res.status(StatusCodes.OK).json(SuccessResponse)
   } catch (error) {
-    ErrorResponse.message = "Failed to fetch inactive airplanes.";
+    ErrorResponse.message = responsesError.InActiveAirplanesMessage[1];
     ErrorResponse.error = error;
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
