@@ -377,28 +377,57 @@ async function filterCapacity(req, res) {
 }
 
 async function getAirPlaneManufactureDetaild(req, res) {
-    try {
-        const { manufacturer } = req.params;
-        if (!manufacturer) {
-                return res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    message: responsesError.getAirPlaneManufactureMessage[2],
-                });
-            }
-        const airplanes = await AirplaneService.getAirPlaneManufacture(manufacturer);
-        
-        SuccessResponse.message = responsesError.getAirPlaneManufactureMessage[0];
-        SuccessResponse.data = airplanes;
-        
-        // Add this return statement
-        return res.status(StatusCodes.OK).json(SuccessResponse);
-        
-    } catch (error) {
-        ErrorResponse.message = responsesError.getAirPlaneManufactureMessage[1];
-        ErrorResponse.error = error;
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  try {
+    const { manufacturer } = req.params;
+    if (!manufacturer) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: responsesError.getAirPlaneManufactureMessage[2],
+      });
     }
+    const airplanes = await AirplaneService.getAirPlaneManufacture(
+      manufacturer
+    );
+
+    SuccessResponse.message = responsesError.getAirPlaneManufactureMessage[0];
+    SuccessResponse.data = airplanes;
+
+    // Add this return statement
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.message = responsesError.getAirPlaneManufactureMessage[1];
+    ErrorResponse.error = error;
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+  }
 }
+
+async function bulkAirplanesCreate(req, res) {
+  try {
+    const { airplanes } = req.body;
+
+    if (!airplanes) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: responsesError.bulkCreateAirplaneMessage[2],
+      });
+    }
+
+    const createdAirplanes = await AirplaneService.bulkCreateAirplanes(airplanes);
+
+    SuccessResponse.message = responsesError.bulkCreateAirplaneMessage[0];
+    SuccessResponse.data = createdAirplanes;
+
+    return res.status(StatusCodes.CREATED).json(SuccessResponse);
+  } catch (error) {
+    console.error("Bulk create error:", error);
+    ErrorResponse.message = responsesError.bulkCreateAirplaneMessage[1];
+    ErrorResponse.error = error.message || error;
+
+    const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+
 
 module.exports = {
   createAirplane,
@@ -413,4 +442,5 @@ module.exports = {
   searchAirplanes,
   filterCapacity,
   getAirPlaneManufactureDetaild,
+  bulkAirplanesCreate,
 };

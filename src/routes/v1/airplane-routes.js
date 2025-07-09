@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { AirPlaneController } = require("../../controllers");
-const { AirPlaneMiddleware } = require("../../middlewares");
-const limiter = require("../../middlewares/rateLimit");
+const { AirPlaneMiddleware,rateLimiter,bulkCreateorValidator } = require("../../middlewares");
+// const limiter = require("../../middlewares/rateLimit");
 const { query } = require("express-validator");
 
 // /api/v1/airplanes/register : POST
@@ -24,7 +24,7 @@ router.get('/active', AirPlaneController.getActiveAirplanes);
 router.get('/in-active', AirPlaneController.getInactiveAirplanes);
 
 // Airplanes Search and Filtering
-router.get('/search',limiter, AirPlaneController.searchAirplanes);
+router.get('/search',rateLimiter.limiter, AirPlaneController.searchAirplanes);
 router.get('/filter',   [
     query('minCapacity').optional().isInt({ min: 0 }).toInt(),
     query('maxCapacity').optional().isInt({ min: 0 }).toInt(),
@@ -38,5 +38,15 @@ router.get('/filter',   [
     query('limit').optional().isInt({ min: 1, max: 100 }).default(10).toInt()
   ],AirPlaneController.filterCapacity)
   router.get('/manufacturer/:manufacturer',AirPlaneController.getAirPlaneManufactureDetaild)
+
+
+  /*
+  // Utilization
+router.get('/airplane/:id/flights', AirPlaneController.getAircraftFlights);
+router.get('/airplane/:id/utilization', AirPlaneController.getAircraftUtilization);
+router.get('/airplanes/available', AirPlaneMiddleware.checkAircraftAvailability, AirPlaneController.getAvailableAircrafts);
+  */
+
+router.post('/bulk-create', bulkCreateorValidator.validateBulkCreate,AirPlaneController.bulkAirplanesCreate)
 
 module.exports = router;

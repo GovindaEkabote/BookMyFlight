@@ -1,5 +1,5 @@
-const { where } = require("sequelize");
 const { Logger } = require("../config");
+const { Op } = require("sequelize");
 
 class CrudRepositories {
   constructor(model) {
@@ -32,8 +32,8 @@ class CrudRepositories {
 
   async destroyAll(confirm = false) {
     if (!confirm) {
-    throw new Error("Mass deletion requires confirmation.");
-  }
+      throw new Error("Mass deletion requires confirmation.");
+    }
     try {
       const response = await this.model.destroy({
         where: {},
@@ -70,7 +70,7 @@ class CrudRepositories {
     }
   }
 
-async update(id, data) {
+  async update(id, data) {
     try {
       const [updatedCount] = await this.model.update(data, {
         where: { id: id },
@@ -82,37 +82,68 @@ async update(id, data) {
       Logger.error(`Something went wrong in update() for ${this.model.name}`);
       throw error;
     }
-}
+  }
 
-async getSearch(options = {}) {
+  async getSearch(options = {}) {
     try {
       const response = await this.model.findAll(options);
       if (!response) {
-        throw new Error('Database returned empty response');
+        throw new Error("Database returned empty response");
       }
       return response;
     } catch (error) {
-      console.error('Repository getAll error:', {
+      console.error("Repository getAll error:", {
         message: error.message,
         stack: error.stack,
-        options
+        options,
       });
       throw error; // Re-throw the original error
     }
-}
+  }
 
-async findByManufacturer(manufacturer) {
+  async findByManufacturer(manufacturer) {
     try {
-        const getManufacturer = await this.model.findAndCountAll({
-            where: { manufacturer }
-        });
-        return getManufacturer;
+      const getManufacturer = await this.model.findAndCountAll({
+        where: { manufacturer },
+      });
+      return getManufacturer;
     } catch (error) {
-        Logger.error("Something went wrong in the crud repository : find manufacturer", error);
-        throw error;
+      Logger.error(
+        "Something went wrong in the crud repository : find manufacturer",
+        error
+      );
+      throw error;
     }
+  }
+
+async findByRegistrationNumbers(registerationNumbers) {
+    try {
+      const aircrafts = await this.model.findAll({
+        where: {
+          registerationNumber: {   // ✅ Use correct column name
+            [Op.in]: registerationNumbers,
+          },
+        },
+      });
+      return aircrafts;
+    } catch (error) {
+      console.error("Error in findByRegistrationNumbers:", error);
+      throw error;
+    }
+  }
+
+async bulkCreate(aircrafts) {
+    try {
+      const createdAirplanes = await this.model.bulkCreate(aircrafts, {
+        validate: true,
+        returning: true,
+      });
+      return createdAirplanes;
+    } catch (error) {
+      console.error("Error in bulkCreate:", error);
+      throw error;
+    }
+  }
 }
 
-
-}
 module.exports = CrudRepositories;

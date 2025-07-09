@@ -1,3 +1,5 @@
 module.exports ={
-    AirPlaneMiddleware : require('./airplane-middleware')
+    AirPlaneMiddleware : require('./airplane-middleware'),
+    rateLimiter:require('./rateLimit'),
+    bulkCreateorValidator:require('./bulkAirplanesCreater-middleware')
 }

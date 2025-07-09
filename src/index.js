@@ -2,10 +2,10 @@ const express = require('express')
 const {serverConfig, loggerConfig} = require('./config')
 const app = express();
 const apiRoutes = require('./routes');
-const limiter = require('./middlewares/rateLimit');
+const {rateLimiter} = require('./middlewares')
 
 app.use(express.json())
-app.use(limiter)
+app.use(rateLimiter.limiter)
 
 app.use('/api',apiRoutes);
 

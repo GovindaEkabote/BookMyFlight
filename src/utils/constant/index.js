@@ -21,7 +21,9 @@ const responsesError = {
     deleteMessage:["Airplane deleted successfully.","Failed to delete airplane.","Failed to delete all airplanes."],
     activeAirplanesMessage:["Active airplanes fetched successfully","Failed to fetch active airplanes."],
     InActiveAirplanesMessage:["Inactive airplanes fetched successfully","Failed to fetch inactive airplanes."],
-    getAirPlaneManufactureMessage:["Airplanes fetched successfully.","manufacturer not found", "Manufacturer parameter is required","No airplanes found for the specified manufacturer"]
+    getAirPlaneManufactureMessage:["Airplanes fetched successfully.","manufacturer not found", "Manufacturer parameter is required","No airplanes found for the specified manufacturer"],
+    bulkCreateAirplaneMessage: [ "Aircrafts created successfully","Error creating aircrafts","Aircrafts array is required","No aircraft data provided","Duplicate registration numbers in request","Some registration numbers already exist","Failed to create aircrafts"                      
+]
 }
 
 module.exports={
