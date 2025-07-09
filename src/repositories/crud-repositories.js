@@ -116,11 +116,12 @@ class CrudRepositories {
     }
   }
 
-async findByRegistrationNumbers(registerationNumbers) {
+  async findByRegistrationNumbers(registerationNumbers) {
     try {
       const aircrafts = await this.model.findAll({
         where: {
-          registerationNumber: {   // ✅ Use correct column name
+          registerationNumber: {
+            // ✅ Use correct column name
             [Op.in]: registerationNumbers,
           },
         },
@@ -132,7 +133,7 @@ async findByRegistrationNumbers(registerationNumbers) {
     }
   }
 
-async bulkCreate(aircrafts) {
+  async bulkCreate(aircrafts) {
     try {
       const createdAirplanes = await this.model.bulkCreate(aircrafts, {
         validate: true,
@@ -144,6 +145,35 @@ async bulkCreate(aircrafts) {
       throw error;
     }
   }
+
+async bulkUpdate(airplanes) {
+  try {
+    const updatePromises = airplanes.map(async (airplane) => {
+      const [affectedCount] = await this.model.update(
+        {
+          modelNumber: airplane.modelNumber,
+          manufacturer: airplane.manufacturer,
+          registerationNumber: airplane.registerationNumber,
+          economySeats: airplane.economySeats,
+          businessSeats: airplane.businessSeats,
+          firstClassSeats: airplane.firstClassSeats,
+          isActive: airplane.isActive ?? true,
+        },
+        {
+          where: { id: airplane.id }
+        }
+      );
+      return { id: airplane.id, updated: affectedCount > 0 };  // Return something clear
+    });
+
+    const results = await Promise.all(updatePromises);
+    return results;
+  } catch (error) {
+    console.error("Error in bulkUpdate:", error);
+    throw error;
+  }
+}
+
 }
 
 module.exports = CrudRepositories;

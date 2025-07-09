@@ -303,6 +303,17 @@ async function bulkCreateAirplanes(aircrafts) {
   return createdAirplanes;
 }
 
+async function bulkUpdateAirplanes(airplanes) {
+  const result = await airplaneRepository.bulkUpdate(airplanes);
+  if(!result || result.length === 0){
+    throw new AppError(
+      responsesError.bulkUpdateAirplaneMessage[0],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    )
+  }
+  return result;
+}
+
 module.exports = {
   createAirplane,
   getAirPlanes,
@@ -316,5 +327,6 @@ module.exports = {
   search,
   filterCapacity,
   getAirPlaneManufacture,
-  bulkCreateAirplanes
+  bulkCreateAirplanes,
+  bulkUpdateAirplanes
 };

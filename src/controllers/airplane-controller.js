@@ -5,11 +5,6 @@ const { responsesError } = require("../utils/constant");
 const { AirplaneRepositories } = require("../repositories");
 const AppError = require("../utils/errors/app-error");
 
-/**
- *
- * POST : /airplanes
- * req-body {modelNumber, capacity,companyName,country}
- */
 async function createAirplane(req, res) {
   try {
     const {
@@ -61,11 +56,6 @@ async function createAirplane(req, res) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
-/**
- *
- * GET : /airplanes
- * req-body: {}
- */
 
 async function getAllAirplanes(req, res) {
   try {
@@ -90,11 +80,7 @@ async function getAllAirplanes(req, res) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
   }
 }
-/**
- *
- * GET : /airplane/:id
- * req-body: {}
- */
+
 async function getAllAirplane(req, res) {
   try {
     const airplanes = await AirplaneService.getAirPlane(req.params.id);
@@ -119,11 +105,6 @@ async function getAllAirplane(req, res) {
   }
 }
 
-/**
- *
- * PUT : /update/:id
- * req-body: {modelNumber,manufacturer,registerationNumber,economySeats,businessSeats,firstClassSeats}
- */
 async function updateAirPlane(req, res) {
   try {
     const airPlaneId = req.params.id;
@@ -150,11 +131,6 @@ async function updateAirPlane(req, res) {
   }
 }
 
-/**
- *
- * DELETE : /delete/:id
- * req-body: {}
- */
 async function destroyAirPlane(req, res) {
   try {
     const deleteAirplane = await AirplaneService.deleteAirPlane(req.params.id);
@@ -180,11 +156,6 @@ async function destroyAirPlane(req, res) {
   }
 }
 
-/**
- *
- * DELETE : /delete
- * req-body: {}
- */
 async function destroyAllAirplanes(req, res) {
   try {
     const deletedCount = await AirplaneService.destroyAllAirplanes();
@@ -428,6 +399,24 @@ async function bulkAirplanesCreate(req, res) {
   }
 }
 
+async function bulkUpdateAirplanes(req,res) {
+  try {
+    const {airplanes} = req.body;
+    const updateAirplanes = await AirplaneService.bulkUpdateAirplanes(airplanes);
+    return res.status(StatusCodes.OK).json({
+      success:true,
+      message:responsesError.bulkUpdateAirplaneMessage[1],
+      data:updateAirplanes
+    });
+  } catch (error) {
+     console.error("Bulk update error:", error);
+    return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: responsesError.bulkUpdateAirplaneMessage[2],
+      error: error.message || error,
+    });
+  }
+}
 
 module.exports = {
   createAirplane,
@@ -443,4 +432,5 @@ module.exports = {
   filterCapacity,
   getAirPlaneManufactureDetaild,
   bulkAirplanesCreate,
+  bulkUpdateAirplanes
 };
