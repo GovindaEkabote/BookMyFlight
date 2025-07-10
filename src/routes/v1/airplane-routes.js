@@ -57,6 +57,8 @@ router.get('/airplane/:id/utilization', AirPlaneController.getAircraftUtilizatio
 router.get('/airplanes/available', AirPlaneMiddleware.checkAircraftAvailability, AirPlaneController.getAvailableAircrafts);
   */
 
+
+// Bulk operations
 router.post(
   "/bulk-create",
   bulkCreateorValidator.validateBulkCreate,
@@ -68,5 +70,8 @@ router.put(
   bulkUpdateValidator.validateBulkUpdate,
   AirPlaneController.bulkUpdateAirplanes
 );
+
+// Maintenance (optional)
+
 
 module.exports = router;
