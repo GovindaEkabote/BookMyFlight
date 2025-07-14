@@ -1,3 +1,4 @@
 module.exports ={
-    AirplaneRepositories:require("./airplane-repositories")
+    AirplaneRepositories:require("./airplane-repositories"),
+    MaintenanceRepositories:require('./maintenance-repositories')
 }
