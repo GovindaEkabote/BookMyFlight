@@ -20,16 +20,59 @@ async function create(req, res) {
   } catch (error) {
     console.error("Error in maintenanceController.create:", error);
 
-    ErrorResponse.message = error.message || "Something went wrong in MaintenanceController";
+    ErrorResponse.message =
+      error.message || "Something went wrong in MaintenanceController";
     ErrorResponse.error = error;
-    
+
     return res
       .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
       .json(ErrorResponse);
   }
+}
 
+async function get(req, res) {
+  try {
+    const record = await MaintenanceService.getMaintenenceStatus(req.params.id);
+    SuccessResponse.message = "Successfully fetched maintenance records";
+    SuccessResponse.data = record;
+
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    console.error("Error in maintenanceController.get:", error);
+
+    ErrorResponse.message =
+      error.message || "Something went wrong in MaintenanceController.get";
+    ErrorResponse.error = error;
+
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+}
+
+async function getAirplanesByStatus(req, res) {
+  try {
+    const status = req.params;
+    const record = await MaintenanceService.getAirplanesByMaintenanceStatus(status);
+    SuccessResponse.message = "Successfully fetched maintenance records";
+    SuccessResponse.data = record;
+
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    console.error("Error in maintenanceController.get:", error);
+
+    ErrorResponse.message =
+    error.message || "Something went wrong in MaintenanceController.get";
+    ErrorResponse.error = error;
+
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
 }
 
 module.exports = {
-    create
-}
+  create,
+  get,
+  getAirplanesByStatus
+};

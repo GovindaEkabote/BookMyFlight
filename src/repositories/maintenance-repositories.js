@@ -18,7 +18,34 @@ class MaintenanceRepositories extends CrudRepositories {
         Logger.error('Error in MaintenanceRepository: getByAirplane')
     }
   }
+  
+  async getByMaintenanceId(id) {
+    try {
+      return await this.model.findAll({
+        where: { id },
+        include: ['airplane'],
+      });
+    } catch (error) {
+      Logger.error("Error in MaintenanceRepository: getByMaintenanceId");
+      throw error;
+    }
+  }
 
+  async getAirplanesByStatus(status) {
+    try {
+       return await this.moadel.findAll({
+      where:{status},
+      include: [{
+        association: 'airplane',
+        required: true 
+      }],
+      order: [['createdAt', 'DESC']]
+    })
+    } catch (error) {
+       Logger.error("Error in MaintenanceRepository: getAirplanesByStatus");
+      throw error;
+    }
+  }
 }
 
 module.exports = MaintenanceRepositories;
