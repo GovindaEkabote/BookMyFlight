@@ -12,5 +12,9 @@ router.post(
 router.get("/:id", MaintenanceController.get);
 
 router.get("/maintanance/:status", MaintenanceController.getAirplanesByStatus);
+router.get(
+  "/maintenance/pending",
+  MaintenanceController.getPendingMaintenance
+);
 
 module.exports = router;

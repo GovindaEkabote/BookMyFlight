@@ -1,6 +1,7 @@
 const CrudRepositories = require("./crud-repositories");
 const { MaintenanceRecord } = require("../models");
 const { Logger } = require("../config");
+const { Op } = require("sequelize");
 
 class MaintenanceRepositories extends CrudRepositories {
   constructor() {
@@ -49,26 +50,29 @@ class MaintenanceRepositories extends CrudRepositories {
     }
   }
 
-  async getPendingMaintenance() {
-    try {
-      return await this.model.findAll({
-        where: { 
-          status:['scheduled', 'in-progress'] 
-         },
-        include: [
-          {
-            association: "airplane",
-            required: true,
-          },
-        ],
-        order: [["createdAt", "ASC"]],
-      });
-    } catch (error) {
-      console.error("Repository error:", error);
-      Logger.error("Error in MaintenanceRepository: getPendingMaintenance");
-      throw error;
-    }
+async getPendingMaintenance() {
+  try {
+    return await this.model.findAll({
+      where: {
+        status: {
+          [Op.or]: ['scheduled', 'in-progress']
+        }
+      },
+      include: [{
+       association: "airplane",
+        required: true,
+      }],
+      order: [
+        ['status', 'ASC'], // in-progress first
+        ['startDate', 'ASC'] // then by start date
+      ],
+      paranoid: true
+    });
+  } catch (error) {
+    console.log("Error in MaintenanceRepository: getPendingMaintenance", error);
+    throw error;
   }
+}
 }
 
 module.exports = MaintenanceRepositories;

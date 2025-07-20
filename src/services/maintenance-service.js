@@ -105,13 +105,23 @@ async function getAirplanesByMaintenanceStatus(status) {
   }
 }
 
-
-async function getPendingMaintenance(params) {
-  
+async function getPendingMaintenance() {
+  try {
+    const maintenanceRecords = await maintenanceRepositories.getPendingMaintenance();
+    return maintenanceRecords;
+  } catch (error) {
+    logger.error(`Error in MaintenanceService: getPendingMaintenance - ${error.message}`);
+    throw new AppError(
+      'Failed to fetch pending maintenance records',
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    );
+  }
 }
 
 module.exports = {
   createMaintenanceRecord,
   getMaintenenceStatus,
   getAirplanesByMaintenanceStatus,
+  getPendingMaintenance,
 };
