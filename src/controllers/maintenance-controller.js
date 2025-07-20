@@ -52,7 +52,9 @@ async function get(req, res) {
 
 async function getAirplanesByStatus(req, res) {
   try {
-    const status = req.params;
+    const {status} = req.params;
+    console.log(status);
+    
     const record = await MaintenanceService.getAirplanesByMaintenanceStatus(status);
     SuccessResponse.message = "Successfully fetched maintenance records";
     SuccessResponse.data = record;
@@ -70,6 +72,8 @@ async function getAirplanesByStatus(req, res) {
       .json(ErrorResponse);
   }
 }
+
+
 
 module.exports = {
   create,

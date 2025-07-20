@@ -11,6 +11,6 @@ router.post(
 
 router.get("/:id", MaintenanceController.get);
 
-router.get("/:status", MaintenanceController.getAirplanesByStatus);
+router.get("/maintanance/:status", MaintenanceController.getAirplanesByStatus);
 
 module.exports = router;

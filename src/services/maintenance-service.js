@@ -97,15 +97,17 @@ async function getAirplanesByMaintenanceStatus(status) {
     logger.error(
       `Error in MaintenanceService: getAirplanesByMaintenanceStatus - ${error.message}`
     );
-
-    if (error instanceof AppError) {
-      throw error;
-    }
+    console.log("Error Message: ", error);
     throw new AppError(
       "Unable to fetch maintenance records",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
+}
+
+
+async function getPendingMaintenance(params) {
+  
 }
 
 module.exports = {
