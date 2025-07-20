@@ -5,5 +5,6 @@ module.exports ={
     rateLimiter:require('./rateLimit'),
     bulkCreateorValidator:require('./bulkAirplanesCreater-middleware'),
     bulkUpdateValidator:require('./bulkAirplanesUpdate'),
-    MaintenanceValidator:require('./maintenance-middleware')
+    MaintenanceValidator:require('./maintenance-middleware'),
+    Pagination:require('./pagination')
 }

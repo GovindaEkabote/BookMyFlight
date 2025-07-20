@@ -32,6 +32,7 @@ async function create(req, res) {
 
 async function get(req, res) {
   try {
+    
     const record = await MaintenanceService.getMaintenenceStatus(req.params.id);
     SuccessResponse.message = "Successfully fetched maintenance records";
     SuccessResponse.data = record;
@@ -74,25 +75,12 @@ async function getAirplanesByStatus(req, res) {
 
 async function getPendingMaintenance(req, res) {
   try {
-    const pendingRecords = await MaintenanceService.getPendingMaintenance();
-    
-    // Categorize records by status
-    const categorized = {
-      inProgress: pendingRecords.filter(r => r.status === 'in-progress'),
-      scheduled: pendingRecords.filter(r => r.status === 'scheduled')
-    };
+    const {page, limit, offset} = req.pagination;
+    const pendingRecords = await MaintenanceService.getPendingMaintenance(page, limit, offset);
+      SuccessResponse.message = "Successfully fetched maintenance records";
+    SuccessResponse.data = pendingRecords;
 
-    return res.status(StatusCodes.OK).json({
-      success: true,
-      message: pendingRecords.length 
-        ? "Pending maintenance records retrieved successfully"
-        : "No pending maintenance records found",
-      data: {
-        total: pendingRecords.length,
-        ...categorized
-      },
-      error: {}
-    });
+    return res.status(StatusCodes.OK).json(SuccessResponse);
     
   } catch (error) {    
     return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({

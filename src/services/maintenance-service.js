@@ -105,9 +105,9 @@ async function getAirplanesByMaintenanceStatus(status) {
   }
 }
 
-async function getPendingMaintenance() {
+async function getPendingMaintenance(page, limit, offset) {
   try {
-    const maintenanceRecords = await maintenanceRepositories.getPendingMaintenance();
+    const maintenanceRecords = await maintenanceRepositories.getPendingMaintenance(limit, offset);
     return maintenanceRecords;
   } catch (error) {
     logger.error(`Error in MaintenanceService: getPendingMaintenance - ${error.message}`);

@@ -50,7 +50,7 @@ class MaintenanceRepositories extends CrudRepositories {
     }
   }
 
-async getPendingMaintenance() {
+async getPendingMaintenance(limit, offset) {
   try {
     return await this.model.findAll({
       where: {
@@ -66,6 +66,8 @@ async getPendingMaintenance() {
         ['status', 'ASC'], // in-progress first
         ['startDate', 'ASC'] // then by start date
       ],
+      limit,
+      offset,
       paranoid: true
     });
   } catch (error) {
