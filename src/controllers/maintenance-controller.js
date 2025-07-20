@@ -13,7 +13,7 @@ async function create(req, res) {
     const record = await MaintenanceService.createMaintenanceRecord(
       maintenanceData
     );
-    SuccessResponse.message = "Maintenance record created successfully";
+    SuccessResponse.message = responsesError.maintanance[2];
     SuccessResponse.data = record;
 
     return res.status(StatusCodes.CREATED).json(SuccessResponse);
@@ -21,7 +21,7 @@ async function create(req, res) {
     console.error("Error in maintenanceController.create:", error);
 
     ErrorResponse.message =
-      error.message || "Something went wrong in MaintenanceController";
+      error.message || responsesError.maintanance[3];
     ErrorResponse.error = error;
 
     return res
@@ -34,7 +34,7 @@ async function get(req, res) {
   try {
     
     const record = await MaintenanceService.getMaintenenceStatus(req.params.id);
-    SuccessResponse.message = "Successfully fetched maintenance records";
+    SuccessResponse.message = responsesError.maintanance[0];
     SuccessResponse.data = record;
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
@@ -42,7 +42,7 @@ async function get(req, res) {
     console.error("Error in maintenanceController.get:", error);
 
     ErrorResponse.message =
-      error.message || "Something went wrong in MaintenanceController.get";
+      error.message || responsesError.maintanance[1];
     ErrorResponse.error = error;
 
     return res
@@ -56,7 +56,7 @@ async function getAirplanesByStatus(req, res) {
     const {status} = req.params;
     
     const record = await MaintenanceService.getAirplanesByMaintenanceStatus(status);
-    SuccessResponse.message = "Successfully fetched maintenance records";
+    SuccessResponse.message = responsesError.getAirplanesByStatus[0];
     SuccessResponse.data = record;
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
@@ -64,7 +64,7 @@ async function getAirplanesByStatus(req, res) {
     console.error("Error in maintenanceController.get:", error);
 
     ErrorResponse.message =
-    error.message || "Something went wrong in MaintenanceController.get";
+    error.message || responsesError.getAirplanesByStatus[1];
     ErrorResponse.error = error;
 
     return res
@@ -77,7 +77,7 @@ async function getPendingMaintenance(req, res) {
   try {
     const {page, limit, offset} = req.pagination;
     const pendingRecords = await MaintenanceService.getPendingMaintenance(page, limit, offset);
-      SuccessResponse.message = "Successfully fetched maintenance records";
+      SuccessResponse.message = responsesError.getPendingMaintenance[0];
     SuccessResponse.data = pendingRecords;
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
@@ -85,7 +85,7 @@ async function getPendingMaintenance(req, res) {
   } catch (error) {    
     return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: error.message || "Failed to fetch pending maintenance records",
+      message: error.message || responsesError.getPendingMaintenance[1],
       data: {},
       error: {
         statusCode: error.statusCode,

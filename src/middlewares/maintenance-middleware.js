@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { ErrorResponse } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
+const { responsesError } = require("../utils/constant");
 
 const MaintenanceMiddleware = {
   validateCreator: (req, res, next) => {
@@ -8,7 +9,7 @@ const MaintenanceMiddleware = {
     const missingFields = requiredFields.filter(field => !req.body[field]);
 
     if (missingFields.length > 0) {
-      ErrorResponse.message = 'Missing required maintenance fields';
+      ErrorResponse.message = responsesError.MaintenanceMiddleware[0];
       ErrorResponse.error = new AppError(
         `Missing fields: ${missingFields.join(", ")}`,
         StatusCodes.BAD_REQUEST

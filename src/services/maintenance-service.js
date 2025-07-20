@@ -112,7 +112,7 @@ async function getPendingMaintenance(page, limit, offset) {
   } catch (error) {
     logger.error(`Error in MaintenanceService: getPendingMaintenance - ${error.message}`);
     throw new AppError(
-      'Failed to fetch pending maintenance records',
+      responsesError.getPendingMaintenance[2],
       StatusCodes.INTERNAL_SERVER_ERROR,
       error.message
     );

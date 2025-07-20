@@ -56,13 +56,29 @@ const responsesError = {
     "Aircrafts array is required and must be an array",
     "Each aircraft must have id, modelNumber, manufacturer, registerationNumber, and seat counts",
     "Registeration number must be alphanumeric with optional hyphens",
-    "Seat counts cannot be negative"
+    "Seat counts cannot be negative",
   ],
-  bulkUpdateAirplaneMessage:[
+  bulkUpdateAirplaneMessage: [
     "Aircrafts updated successfully",
     "Aircrafts updated successfully",
-    "Error updating aircrafts"
-  ]
+    "Error updating aircrafts",
+  ],
+  getPendingMaintenance: [
+    "Successfully fetched maintenance records",
+    "Failed to fetch pending maintenance records",
+    "Failed to fetch pending maintenance records",
+  ],
+  MaintenanceMiddleware: ["Missing required maintenance fields"],
+  getAirplanesByStatus: [
+    "Successfully fetched maintenance records",
+    "Something went wrong in MaintenanceController.get",
+  ],
+  maintanance: [
+    "Successfully fetched maintenance records",
+    "Something went wrong in MaintenanceController.get",
+    "Maintenance record created successfully.",
+    "Something went wrong in MaintenanceController",
+  ],
 };
 
 module.exports = {
