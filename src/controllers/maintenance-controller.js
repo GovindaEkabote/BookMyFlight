@@ -77,7 +77,7 @@ async function getPendingMaintenance(req, res) {
   try {
     const {page, limit, offset} = req.pagination;
     const pendingRecords = await MaintenanceService.getPendingMaintenance(page, limit, offset);
-      SuccessResponse.message = responsesError.getPendingMaintenance[0];
+    SuccessResponse.message = responsesError.getPendingMaintenance[0];
     SuccessResponse.data = pendingRecords;
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
@@ -95,9 +95,32 @@ async function getPendingMaintenance(req, res) {
   }
 }
 
+async function updateMaintenanceRecord(req,res) {
+  try {
+    const record = await MaintenanceService.updateMaintenanceRecord(
+      req.params.id,
+      req.body
+    )
+      SuccessResponse.message = responsesError.getPendingMaintenance[0];
+    SuccessResponse.data = record;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    return res.status(error.StatusCodes || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || responsesError.getPendingMaintenance[1],
+      data: {},
+      error: {
+        statusCode: error.statusCode,
+        explanation: error.explanation
+      }
+    })
+  }
+}
+
 module.exports = {
   create,
   get,
   getAirplanesByStatus,
-  getPendingMaintenance
+  getPendingMaintenance,
+  updateMaintenanceRecord
 };

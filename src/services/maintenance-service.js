@@ -119,9 +119,35 @@ async function getPendingMaintenance(page, limit, offset) {
   }
 }
 
+async function updateMaintenanceRecord(id, updateData) {
+  try {
+    const record = await maintenanceRepositories.update(id,updateData);
+    if(!record){
+      throw new AppError(
+        `Maintanance record not found`,
+        StatusCodes.NOT_FOUND
+      );
+    }    
+    if(updateData.airplaneId && updateData.airplaneId !== record.airplaneId){
+      throw new Error('Cannot change airplane for existing maintenance record');
+    }
+    return record;
+  } catch (error) {
+     logger.error(`Error in MaintenanceService: updateMaintenanceRecord - ${error.message}`);
+    throw new AppError(
+      responsesError.getPendingMaintenance[2],
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    );
+  }
+}
+
+
+
 module.exports = {
   createMaintenanceRecord,
   getMaintenenceStatus,
   getAirplanesByMaintenanceStatus,
   getPendingMaintenance,
+  updateMaintenanceRecord
 };

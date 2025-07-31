@@ -31,7 +31,7 @@ class MaintenanceRepositories extends CrudRepositories {
     }
   }
 
-  async getAirplanesByStatus(status) {
+async getAirplanesByStatus(status) {
     try {
       return await this.model.findAll({
         where: { status },
@@ -48,7 +48,7 @@ class MaintenanceRepositories extends CrudRepositories {
       Logger.error("Error in MaintenanceRepository: getAirplanesByStatus");
       throw error;
     }
-  }
+}
 
 async getPendingMaintenance(limit, offset) {
   try {
@@ -75,6 +75,22 @@ async getPendingMaintenance(limit, offset) {
     throw error;
   }
 }
+
+async update(id, updateData) {
+  try {
+    const record = await MaintenanceRecord.findByPk(id);
+    if(!record){
+      throw new Error("Maintenance record not found");
+    }
+    return await record.update(updateData)
+  } catch (error) {
+    console.log("Error in MaintenanceRepository: update",error);
+    throw error;    
+  }
 }
+
+}
+
+
 
 module.exports = MaintenanceRepositories;
