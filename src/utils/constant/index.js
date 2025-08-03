@@ -79,6 +79,14 @@ const responsesError = {
     "Maintenance record created successfully.",
     "Something went wrong in MaintenanceController",
   ],
+  update:[
+    "Successfully update maintenance records",
+    "Something went wrong in updateMaintenanceRecord.put",
+  ],
+  delete:[
+    "Successfully delete maintenance records",
+    "Something went wrong in deleteMaintenanceRecord.delete",
+  ]
 };
 
 module.exports = {
