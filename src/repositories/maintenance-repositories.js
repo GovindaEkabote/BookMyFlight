@@ -89,6 +89,18 @@ async update(id, updateData) {
   }
 }
 
+async delete(id) {
+    try {
+      const record = await MaintenanceRecord.findByPk(id);
+      if (!record) {
+        throw new Error('Maintenance record not found');
+      }
+      return await record.destroy();
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 

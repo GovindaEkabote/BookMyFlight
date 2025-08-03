@@ -143,11 +143,31 @@ async function updateMaintenanceRecord(id, updateData) {
 }
 
 
+async function deleteMaintenanceRecord(id) {
+  try {
+    const record = await maintenanceRepositories.delete(id);
+    if(!record){
+      throw new AppError(
+        `Maintanance record not found`,
+        StatusCodes.NOT_FOUND
+      );
+    }    
+    return record;
+  } catch (error) {
+     logger.error(`Error in MaintenanceService: deleteMaintenanceRecord - ${error.message}`);
+    throw new AppError(
+      responsesError.getPendingMaintenance[2],
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message
+    );
+  }
+}
 
 module.exports = {
   createMaintenanceRecord,
   getMaintenenceStatus,
   getAirplanesByMaintenanceStatus,
   getPendingMaintenance,
-  updateMaintenanceRecord
+  updateMaintenanceRecord,
+  deleteMaintenanceRecord
 };

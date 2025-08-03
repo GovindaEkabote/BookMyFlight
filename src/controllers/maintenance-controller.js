@@ -117,10 +117,30 @@ async function updateMaintenanceRecord(req,res) {
   }
 }
 
+async function deleteMaintenanceRecord(req,res) {
+  try {
+    const record = await MaintenanceService.deleteMaintenanceRecord(req.params.id)
+    SuccessResponse.message = responsesError.getPendingMaintenance[0];
+    SuccessResponse.data = record;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    return res.status(error.StatusCodes || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: error.message || responsesError.getPendingMaintenance[1],
+      data: {},
+      error: {
+        statusCode: error.statusCode,
+        explanation: error.explanation
+      }
+    })
+  }
+}
+
 module.exports = {
   create,
   get,
   getAirplanesByStatus,
   getPendingMaintenance,
-  updateMaintenanceRecord
+  updateMaintenanceRecord,
+  deleteMaintenanceRecord
 };
