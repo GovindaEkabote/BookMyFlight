@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
       },
     },
-    {
+    { sequelize,
       timestamps: true,
       paranoid: true,
     }
@@ -67,3 +67,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return Users;
 };
+
