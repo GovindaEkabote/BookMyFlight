@@ -1,57 +1,40 @@
 const { StatusCodes } = require("http-status-codes");
-const { usersService } = require("../services");
+const { UserService  } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
-const { responsesError } = require("../utils/constant");
-const AppError = require("../utils/errors/app-error");
 
-async function userRegister(req, res) {
+async function registerUser(req, res) {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      phone,
-      dateOfBirth,
-      passportNumber,
-      role,
-    } = req.body;
+    const requiredFields = ['firstName', 'lastName', 'email', 'password'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
 
-    if (!firstName || !lastName || !email || !password || !role) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: "All required fields must be filled.",
-        data: {},
-        error: {},
-      });
+    if (missingFields.length > 0) {
+      ErrorResponse.message = "Missing required fields";
+      ErrorResponse.error = { fields: missingFields };
+      return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
 
-    // Call service to create airplane
-    const register = await usersService.userRegister({
-      firstName,
-      lastName,
-      email,
-      password,
-      phone,
-      dateOfBirth,
-      passportNumber,
-      role,
-    });
+    // Validate role if provided
+    if (req.body.role && !['customer', 'admin', 'agent'].includes(req.body.role)) {
+      ErrorResponse.message = "Invalid role specified";
+      ErrorResponse.error = { validRoles: ['customer', 'admin', 'agent'] };
+      return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
 
-    SuccessResponse.message = responsesError.successMessage;
-    SuccessResponse.data = register;
+    const user = await UserService.createUser(req.body);
+
+    SuccessResponse.message = "User registered successfully";
+    SuccessResponse.data = user;
 
     return res.status(StatusCodes.CREATED).json(SuccessResponse);
   } catch (error) {
-    console.error("user register error:", error);
-
-    ErrorResponse.message = responsesError.FailedMessage;
+    ErrorResponse.message = "Failed to register user";
     ErrorResponse.error = error;
 
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(ErrorResponse);
+    const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+    return res.status(statusCode).json(ErrorResponse);
   }
 }
 
 module.exports = {
-  userRegister,
+  registerUser
 };

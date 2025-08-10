@@ -1,21 +1,24 @@
 const CrudRepositories = require("./crud-repositories");
-const { Users  } = require("../models");
+const { User } = require("../models");
 const { Logger } = require("../config");
 
-class UsersRepositories extends CrudRepositories {
+
+class UserRepository extends CrudRepositories {
   constructor() {
-    super(Users);
+    super(User);
   }
-  async create(data) {
+
+  async getUserByEmail(email) {
     try {
-      const response = await this.model.create(data);
-      return response;
+      const user = await User.findOne({ 
+        where: { email } 
+      });
+      return user;
     } catch (error) {
-      Logger.error("Something went wront in the crud repository :  create");
+      Logger.error("Something went wrong in user repository: getUserByEmail");
       throw error;
     }
   }
-
 }
 
-module.exports = UsersRepositories;
+module.exports = UserRepository;

@@ -1,14 +1,15 @@
 "use strict";
 const { Model } = require("sequelize");
+const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
-  class Users extends Model {
+  class User extends Model {
     static associate(models) {
-      // define association here
+      // define associations here
     }
   }
 
-  Users.init(
+  User.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -18,10 +19,16 @@ module.exports = (sequelize, DataTypes) => {
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true
+        }
       },
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true
+        }
       },
       email: {
         type: DataTypes.STRING,
@@ -29,42 +36,64 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         validate: {
           isEmail: true,
-        },
+          notEmpty: true
+        }
       },
       password: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [8, 128] // Minimum 8 characters
+        }
       },
       phone: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         validate: {
-          is: /^\+?[0-9]{10,15}$/,
-        },
+          is: /^\+?[0-9]{10,15}$/
+        }
       },
       dateOfBirth: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DATEONLY
       },
       passportNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING
       },
       isVerified: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        defaultValue: false
       },
       role: {
         type: DataTypes.ENUM("customer", "admin", "agent"),
         defaultValue: "customer",
+        validate: {
+          isIn: [["customer", "admin", "agent"]]
+        }
       },
       lastLogin: {
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
-    { sequelize,
+    {
+      sequelize,
+      modelName: 'User',
       timestamps: true,
       paranoid: true,
+      hooks: {
+        beforeCreate: async (user) => {
+          if (user.password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+          }
+        }
+      }
     }
   );
 
-  return Users;
-};
+  // Instance method to compare passwords
+  User.prototype.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+  };
 
+  return User;
+};

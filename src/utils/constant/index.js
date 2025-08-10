@@ -17,6 +17,7 @@ const responsesError = {
   CanNotFetchAllAiroplanes: "cannot fetch data of all the airplanes",
   successMessage: "Airplane created successfully.",
   FailedMessage: "Airplane registration failed.",
+  userRegisterFailed:"User registration failed.",
   FetchedSuccessfully: "Airplanes fetched successfully.",
   FailedFetch: "Failed to Fetch Airoplaned",
   updateMessage: [
