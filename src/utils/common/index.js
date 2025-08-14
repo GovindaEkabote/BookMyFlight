@@ -1,5 +1,7 @@
 module.exports ={
     ErrorResponse : require('./error-response'),
     SuccessResponse : require('./success-response'),
-    PaginationResponse: require('./pagination-response')
+    PaginationResponse: require('./pagination-response'),
+    generateTokens : require('./token'),
+    
 }

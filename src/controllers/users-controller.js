@@ -1,6 +1,8 @@
 const { StatusCodes } = require("http-status-codes");
 const { UserService  } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
+const {setRefreshTokenCookie} = require('../utils/common/token')
+const ApiResponse = require("../utils/common/apiResponse")
 
 async function registerUser(req, res) {
   try {
@@ -35,6 +37,35 @@ async function registerUser(req, res) {
   }
 }
 
+async function login(req, res, next) {
+  try {
+    const { email, password } = req.body;
+    const ipAddress = req.ip;
+    const userAgent = req.get('User-Agent');
+
+    const { user, tokens } = await UserService.login(
+      email,
+      password,
+      ipAddress,
+      userAgent
+    );
+
+    setRefreshTokenCookie(res, tokens.refreshToken);
+
+    ApiResponse.success(res, {
+      message: 'Login successful',
+      data: {
+        user,
+        accessToken: tokens.accessToken
+      },
+      statusCode: StatusCodes.OK
+    });
+
+  } catch (error) {
+    next(error);
+  }
+}
 module.exports = {
-  registerUser
+  registerUser,
+  login
 };

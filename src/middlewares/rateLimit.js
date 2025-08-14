@@ -1,5 +1,6 @@
 const { rateLimit } = require("express-rate-limit");
 const { StatusCodes } = require("http-status-codes");
+const ApiError = require('../utils/errors/app-error');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -16,4 +17,17 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = {limiter};
+const loginRateLimiter = (maxAttempts, windowMs) =>{
+  return rateLimit({
+    windowMs,
+    max:maxAttempts,
+    handler:(req,res) =>{
+      throw new ApiError('Too many login attempts. Please try again later.',StatusCodes.TOO_MANY_REQUESTS)
+    },
+    keyGenerator:(req) =>{
+      return req.ip;
+    }
+  })
+}
+
+module.exports = {limiter,loginRateLimiter};
