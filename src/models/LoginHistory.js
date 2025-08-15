@@ -1,6 +1,8 @@
 // src/models/loginhistory.js
 'use strict';
 
+const { Sequelize } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   const LoginHistory = sequelize.define('LoginHistory', {
     id: {
@@ -12,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    activityType: {
+      type: DataTypes.ENUM('login', 'logout'),
+      allowNull: false
+    },
     ipAddress: {
       type: DataTypes.STRING,
       allowNull: true
@@ -20,24 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    loginTime: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
-      allowNull: true
-    }
+    activityTime: {
+  type: Sequelize.DATE,
+  defaultValue: Sequelize.NOW
+}
   }, {
     tableName: 'LoginHistories',
     paranoid: true, // enables deletedAt for soft deletes

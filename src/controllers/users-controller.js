@@ -1,13 +1,13 @@
 const { StatusCodes } = require("http-status-codes");
-const { UserService  } = require("../services");
+const { UserService } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
-const {setRefreshTokenCookie} = require('../utils/common/token')
-const ApiResponse = require("../utils/common/apiResponse")
+const { setRefreshTokenCookie } = require("../utils/common/token");
+const ApiResponse = require("../utils/common/apiResponse");
 
 async function registerUser(req, res) {
   try {
-    const requiredFields = ['firstName', 'lastName', 'email', 'password'];
-    const missingFields = requiredFields.filter(field => !req.body[field]);
+    const requiredFields = ["firstName", "lastName", "email", "password"];
+    const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
       ErrorResponse.message = "Missing required fields";
@@ -16,9 +16,12 @@ async function registerUser(req, res) {
     }
 
     // Validate role if provided
-    if (req.body.role && !['customer', 'admin', 'agent'].includes(req.body.role)) {
+    if (
+      req.body.role &&
+      !["customer", "admin", "agent"].includes(req.body.role)
+    ) {
       ErrorResponse.message = "Invalid role specified";
-      ErrorResponse.error = { validRoles: ['customer', 'admin', 'agent'] };
+      ErrorResponse.error = { validRoles: ["customer", "admin", "agent"] };
       return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
 
@@ -41,7 +44,7 @@ async function login(req, res, next) {
   try {
     const { email, password } = req.body;
     const ipAddress = req.ip;
-    const userAgent = req.get('User-Agent');
+    const userAgent = req.get("User-Agent");
 
     const { user, tokens } = await UserService.login(
       email,
@@ -53,19 +56,42 @@ async function login(req, res, next) {
     setRefreshTokenCookie(res, tokens.refreshToken);
 
     ApiResponse.success(res, {
-      message: 'Login successful',
+      message: "Login successful",
       data: {
         user,
-        accessToken: tokens.accessToken
+        accessToken: tokens.accessToken,
       },
-      statusCode: StatusCodes.OK
+      statusCode: StatusCodes.OK,
     });
-
   } catch (error) {
     next(error);
   }
 }
+
+async function logout(req, res, next) {
+  try {
+    const ipAddress = req.ip;
+    const userAgent = req.get("User-Agent");
+    await activityHistoryService.logActivity(
+      req.user.id,
+      "logout",
+      ipAddress,
+      userAgent
+    );
+    res.clearCookie("refreshToken");
+    await UserService.invalidateTokens(req.user.id);
+
+    ApiResponse.success(res, {
+      message: "Logout successful",
+      statusCode: StatusCodes.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   registerUser,
-  login
+  login,
+  logout,
 };

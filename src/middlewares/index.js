@@ -6,5 +6,6 @@ module.exports ={
     bulkCreateorValidator:require('./bulkAirplanesCreater-middleware'),
     bulkUpdateValidator:require('./bulkAirplanesUpdate'),
     MaintenanceValidator:require('./maintenance-middleware'),
-    Pagination:require('./pagination')
+    Pagination:require('./pagination'),
+    authenticate:require('./authenticate')
 }
