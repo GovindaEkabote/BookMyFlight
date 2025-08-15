@@ -97,7 +97,6 @@ async function getAirplanesByMaintenanceStatus(status) {
     logger.error(
       `Error in MaintenanceService: getAirplanesByMaintenanceStatus - ${error.message}`
     );
-    console.log("Error Message: ", error);
     throw new AppError(
       "Unable to fetch maintenance records",
       StatusCodes.INTERNAL_SERVER_ERROR

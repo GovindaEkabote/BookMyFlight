@@ -185,7 +185,6 @@ async function search({ filters, pagination }) {
       }),
     };
 
-    console.log("Final search options:", JSON.stringify(options, null, 2));
 
     const result = await airplaneRepository.findAndCountAll(options);
     return result;
@@ -246,7 +245,6 @@ async function filterCapacity({
       order: [[totalSeatsExpr, "ASC"]],
     };
 
-    console.log("Final filter options:", JSON.stringify(options, null, 2));
 
     const result = await airplaneRepository.findAndCountAll(options);
 

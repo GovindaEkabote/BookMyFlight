@@ -3,7 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const UserRepository = require("../repositories/users-repositories");
 const AppError = require("../utils/errors/app-error");
 const { generateTokens } = require("../utils/common/token"); 
-
+const { LoginHistory } = require('../models');
 const userRepository = new UserRepository();
 
 async function createUser(data) {
@@ -61,10 +61,26 @@ async function login(email, password, ipAddress, userAgent) {
     lockUntil: null
   });
 
+    await saveLoginHistory(user.id, ipAddress, userAgent);
+
+
   return {
     user: sanitizeUser(user),
     tokens
   };
+}
+
+async function saveLoginHistory(userId, ipAddress, userAgent) {
+  if (!userId) {
+    throw new Error("User ID is required for login history");
+  }
+
+  return await LoginHistory.create({
+    userId,
+    ipAddress: ipAddress || null,
+    userAgent: userAgent || null,
+    loginTime: new Date()
+  });
 }
 
 async function handleFailedLogin(user) {
