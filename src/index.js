@@ -1,15 +1,19 @@
-const express = require('express')
-const {serverConfig, loggerConfig} = require('./config')
-const app = express();
+const express = require('express');
+const cookieParser = require("cookie-parser"); // ✅ import cookie-parser
+const { serverConfig, loggerConfig } = require('./config');
 const apiRoutes = require('./routes');
-const {rateLimiter} = require('./middlewares')
+const { rateLimiter } = require('./middlewares');
 
-app.use(express.json())
-app.use(rateLimiter.limiter)
+const app = express();
 
-app.use('/api',apiRoutes);
+// Middlewares
+app.use(express.json());
+app.use(cookieParser()); // ✅ enable cookies
+app.use(rateLimiter.limiter);
 
+// Routes
+app.use('/api', apiRoutes);
 
-app.listen(serverConfig.PORT, ()=>{
-    console.log(`Successfully Started the server on PORT: ${serverConfig.PORT}`);
-})
+app.listen(serverConfig.PORT, () => {
+  console.log(`✅ Successfully started the server on PORT: ${serverConfig.PORT}`);
+});

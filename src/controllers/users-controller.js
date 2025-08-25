@@ -3,6 +3,7 @@ const { UserService } = require("../services");
 const { ErrorResponse, SuccessResponse } = require("../utils/common");
 const { setRefreshTokenCookie } = require("../utils/common/token");
 const ApiResponse = require("../utils/common/apiResponse");
+const {User} = require('../models/')
 
 async function registerUser(req, res) {
   try {
@@ -72,23 +73,60 @@ async function logout(req, res, next) {
   try {
     const ipAddress = req.ip;
     const userAgent = req.get("User-Agent");
-    await activityHistoryService.logActivity(
-      req.user.id,
-      "logout",
-      ipAddress,
-      userAgent
-    );
-    res.clearCookie("refreshToken");
-    await UserService.invalidateTokens(req.user.id);
+    const refreshToken = req.cookies.refreshToken;
 
-    ApiResponse.success(res, {
+    let userId = req.userId; // From the middleware
+
+    if (!userId && refreshToken) {
+      try {
+        const decoded = jwt.verify(
+          refreshToken,
+          serverConfig.JWT_REFRESH_SECRET
+        );
+        userId = decoded.id;
+      } catch (error) {
+        console.log("Refresh token invalid during logout:", error.message);
+      }
+    }
+
+    let user = null;
+
+    if (userId) {
+      try {
+        // Save logout history
+        await UserService.saveLoginHistory({
+          userId: userId,
+          activityType: "logout",
+          ipAddress,
+          userAgent,
+        });
+
+        // Fetch user info to return
+        user = await User.findByPk(userId, {
+          attributes: ["id", "firstName", "lastName", "email", "role"],
+        });
+
+        // Optionally: await UserService.invalidateTokens(userId);
+      } catch (historyError) {
+        console.error("Failed to save logout history:", historyError);
+      }
+    }
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    return ApiResponse.success(res, {
       message: "Logout successful",
       statusCode: StatusCodes.OK,
+      data: user, // 👈 now you’ll see which user logged out
     });
   } catch (error) {
     next(error);
   }
 }
+
 
 module.exports = {
   registerUser,

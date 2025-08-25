@@ -7,5 +7,5 @@ module.exports ={
     bulkUpdateValidator:require('./bulkAirplanesUpdate'),
     MaintenanceValidator:require('./maintenance-middleware'),
     Pagination:require('./pagination'),
-    authenticate:require('./authenticate')
+    extractUserFromRefreshToken:require('./authenticate')
 }

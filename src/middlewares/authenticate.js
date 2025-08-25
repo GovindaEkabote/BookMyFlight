@@ -1,34 +1,27 @@
 const jwt = require("jsonwebtoken");
-const { ErrorResponse } = require("../utils/common");
-const { User } = require("../models");
+const { serverConfig } = require("../config");
 
-module.exports = async function authenticate(req, res, next) {
+async function extractUserFromRefreshToken(req, res, next) {
   try {
-    const authHeader = req.headers["authorization"];
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
-      return ErrorResponse.unauthorized(res, "Authorization token missing");
-    }
-    const token = authHeader.split(" ")[1];
-    // Verify token
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const refreshToken = req.cookies.refreshToken;
 
-    // Find the user from DB
-    const user = await User.findByPk(decoded.id);
-    if (!user) {
-      return ErrorResponse.unauthorized(res, "User not found");
+    if (!refreshToken) {
+      req.userId = null;
+      return next();
     }
 
-    // Attach user to request object
-    req.user = user;
+    try {
+      const decoded = jwt.verify(refreshToken, serverConfig.JWT_REFRESH_SECRET);
+      req.userId = decoded.id;
+    } catch (error) {
+      console.warn("Invalid/expired refresh token in middleware:", error.message);
+      req.userId = null;
+    }
 
     next();
-  } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      return ErrorResponse.unauthorized(res, "Token expired");
-    }
-    if (err.name === "JsonWebTokenError") {
-      return ErrorResponse.unauthorized(res, "Invalid token");
-    }
-    next(err);
+  } catch (error) {
+    next(error);
   }
-};
+}
+
+module.exports = extractUserFromRefreshToken;

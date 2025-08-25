@@ -108,6 +108,8 @@ async function saveLoginHistory({ userId, activityType, ipAddress, userAgent }) 
   });
 }
 
+
+
 async function handleFailedLogin(user) {
   const maxAttempts = 5;
   const lockDuration = 15 * 60 * 1000; // 15 mins
@@ -136,4 +138,5 @@ module.exports = {
   saveLoginHistory,
   handleFailedLogin,
   sanitizeUser,
+  // invalidateTokens,
 };

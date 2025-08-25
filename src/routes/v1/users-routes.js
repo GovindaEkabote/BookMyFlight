@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { UserController } = require("../../controllers");
-const { rateLimiter, authenticate } = require("../../middlewares");
+const { rateLimiter, extractUserFromRefreshToken } = require("../../middlewares");
 const loginValidator = require("../../middlewares/login-middleware");
 const { query } = require("express-validator");
 
@@ -14,6 +14,6 @@ router.post(
   UserController.login
 );
 
-router.post("/logout", authenticate, UserController.logout);
+router.post("/logout", extractUserFromRefreshToken ,UserController.logout);
 
 module.exports = router;
